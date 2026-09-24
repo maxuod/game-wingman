@@ -2,7 +2,7 @@
 
 ## 0.1.0 — 2026-09-24
 
-Initial public source preview, published as **Game Wingman** (earlier working name: Game Win Man).
+Initial public source preview, published as **Game Wingman**.
 
 - Electron desktop control window and independent compact overlay.
 - Explicit window selection, low-frequency preview, pause/resume and local image import.
@@ -13,3 +13,7 @@ Initial public source preview, published as **Game Wingman** (earlier working na
 - English and Chinese READMEs, privacy/security notes, data-source research and Windows development handoff.
 
 Not yet implemented: desktop AI settings, screenshot-to-model input, OCR, reviewed tactical-guide retrieval and dynamic recommendations. Windows gameplay and live provider calls are not validated by this release. No installer or signed binary release is published with this source checkpoint.
+
+### Naming consistency
+
+The application wordmark, overlay and packages use Game Wingman. Setup instructions clone into a local `game wingman` directory; the GitHub repository and npm identifier remain `game-wingman`.

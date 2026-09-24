@@ -34,8 +34,8 @@ macOS 已验证桌面外壳及合成窗口读取。下一阶段以 Windows 作�
 安装 Git 和 Node.js 22（22.12–22.x；本机验证版本为 22.23.1），在 PowerShell 执行：
 
 ```powershell
-git clone https://github.com/maxuod/game-wingman.git
-cd game-wingman
+git clone https://github.com/maxuod/game-wingman.git "game wingman"
+cd "game wingman"
 npm ci
 npm start
 ```

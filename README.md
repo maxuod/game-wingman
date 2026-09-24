@@ -39,8 +39,8 @@ These are application screenshots. They show the current capture/lookup shell, n
 Use Git and **Node.js 22.12–22.x**; `.nvmrc` pins the locally tested version. No API key is needed to run the desktop shell.
 
 ```sh
-git clone https://github.com/maxuod/game-wingman.git
-cd game-wingman
+git clone https://github.com/maxuod/game-wingman.git "game wingman"
+cd "game wingman"
 npm ci
 npm start
 ```

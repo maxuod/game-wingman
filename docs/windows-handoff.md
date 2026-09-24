@@ -1,14 +1,14 @@
 # Windows 接续指南
 
-公开交接点：2026-09-24，版本 0.1.0，仓库 https://github.com/maxuod/game-wingman 。产品名称已统一为 **Game Wingman**，“侧席”是当前中文 UI 名称。此时按要求暂停进一步功能开发，下一次以 Windows 作为 TFT 游戏实测环境；保留 macOS 桌面架构。
+公开交接点：2026-09-24，版本 0.1.0，仓库 https://github.com/maxuod/game-wingman 。产品名称已统一为 **Game Wingman**，主窗口、浮窗和软件包统一显示同一名称。此时按要求暂停进一步功能开发，下一次以 Windows 作为 TFT 游戏实测环境；保留 macOS 桌面架构。
 
 ## 在新电脑启动
 
 安装 Git 与 Node.js 22.12–22.x；仓库 `.nvmrc` 为 22.23.1。在 PowerShell 中：
 
 ```powershell
-git clone https://github.com/maxuod/game-wingman.git
-cd game-wingman
+git clone https://github.com/maxuod/game-wingman.git "game wingman"
+cd "game wingman"
 npm ci
 npm run check
 npm test
