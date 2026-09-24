@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; media-src blob:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Game Wingman</title><link rel="stylesheet" href="styles.css">
+</head>
+<body class="app">
+  <header class="titlebar"><span class="wordmark"><span class="brand-mark" aria-hidden="true"></span>侧席 <span class="brand-en">Game Wingman</span></span><span class="region">TFT · 美服</span><button id="settings-button" class="text-button">资料与设置</button></header>
+  <main class="workspace">
+    <section class="controls" aria-label="画面读取控制">
+      <div class="source-label"><span id="state-dot" class="state-dot"></span><div><h1 id="source-name">选择一个游戏窗口</h1><p id="source-detail">开始前不会读取屏幕</p></div></div>
+      <div class="actions"><button id="choose-source">选择窗口</button><button id="capture-button" class="primary" disabled>开始读取</button><button id="overlay-button" aria-pressed="false">显示浮窗</button></div>
+    </section>
+    <div id="notice" class="notice" role="alert" hidden><span id="notice-text"></span><button id="permission-button" class="text-button" hidden>打开系统设置</button><button id="dismiss-notice" class="icon-button" aria-label="关闭提示">×</button></div>
+    <section class="preview" aria-label="所选窗口画面预览">
+      <div id="empty-preview" class="empty-preview"><svg width="48" height="40" viewBox="0 0 48 40" fill="none" aria-hidden="true"><rect x="4.5" y="3.5" width="39" height="27" rx="4" stroke="currentColor" stroke-width="1.5"/><path d="M18 37h12M24 31v6M17 17h14M24 10v14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><p>等待画面</p><span>选择窗口，或导入一张截图</span></div>
+      <img id="frame-preview" alt="当前选择的游戏画面" hidden>
+      <span id="preview-label" class="preview-label" hidden>预览</span>
+    </section>
+    <div class="preview-meta"><span id="capture-detail" role="status">画面仅留在本机内存</span><button id="import-button" class="text-button">导入截图</button></div>
+  </main>
+  <footer class="app-footer"><span>试用版 0.1 <span class="separator">/</span> 识别与攻略尚未接入</span><button id="help-button" class="text-button">使用说明 · 风险提示</button></footer>
+  <video id="capture-video" muted playsinline hidden></video>
+
+  <dialog id="source-dialog" aria-labelledby="source-title"><div class="dialog-heading"><h2 id="source-title">选择游戏窗口</h2><button class="icon-button" data-close="source-dialog" aria-label="关闭窗口选择">×</button></div><p class="muted dialog-intro">只读取你选中的窗口。</p><div id="source-list" class="source-list" role="status"></div><div class="dialog-footer"><button id="refresh-sources" class="text-button">刷新列表</button><button class="text-button" data-close="source-dialog">取消</button></div></dialog>
+  <dialog id="settings-dialog" class="settings-dialog" aria-labelledby="settings-title">
+    <div class="dialog-heading"><h2 id="settings-title">资料与设置</h2><button class="icon-button" data-close="settings-dialog" aria-label="关闭资料与设置">×</button></div>
+    <div class="settings-tabs" role="tablist" aria-label="设置分类"><button id="data-tab" role="tab" aria-selected="true" aria-controls="data-panel">美服资料</button><button id="overlay-tab" role="tab" aria-selected="false" aria-controls="overlay-panel" tabindex="-1">浮窗设置</button></div>
+    <section id="data-panel" role="tabpanel" aria-labelledby="data-tab" class="settings-section"><div class="section-heading"><h3>Set 18 名称字典</h3><button id="sync-button">同步资料</button></div><p id="catalog-status" class="muted">尚未同步 · Riot Data Dragon / en_US</p><p class="fine">英雄与羁绊资料，不含战术攻略。资源版本不等于 TFT 补丁，热修覆盖未确认。</p><label for="catalog-search" class="visually-hidden">搜索英雄或羁绊英文名称</label><input id="catalog-search" type="search" placeholder="搜索英雄或羁绊英文名…" maxlength="120" disabled><div id="catalog-results" class="catalog-results"></div><div id="pinned-entry" class="pinned-entry" hidden><span id="pinned-name"></span><button id="clear-entry" class="text-button">取消固定</button></div><p id="sync-feedback" class="fine" role="status"></p></section>
+    <section id="overlay-panel" role="tabpanel" aria-labelledby="overlay-tab" class="settings-section overlay-settings" hidden><label class="setting-row" for="opacity"><span>不透明度</span><input id="opacity" type="range" min="60" max="100" value="100"><output id="opacity-value" for="opacity">100%</output></label><div class="setting-row"><span>点击穿透</span><button id="interaction-button" disabled>开启</button></div><p id="shortcut-help" class="fine"></p><button id="reset-overlay" class="text-button">恢复浮窗位置与操作</button></section>
+  </dialog>
+  <script type="module" src="main.js"></script>
+</body></html>

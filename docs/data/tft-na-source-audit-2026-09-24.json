@@ -1,0 +1,87 @@
+{
+  "region": "NA",
+  "locale": "en_US",
+  "checked_date": "2026-09-24",
+  "tft_patch": "18.3",
+  "official_hotfix": "18.3 B (September 24)",
+  "ddragon_version": "16.19.1",
+  "cdragon_path_version": "16.19",
+  "set_id": 18,
+  "mutator": "TFTSet18",
+  "cdragon_display_name_anomaly": "Set10",
+  "records": {
+    "champion_entries_all": 91,
+    "champion_entries_with_traits": 74,
+    "traits": 36,
+    "augment_references": 592,
+    "item_references": 770
+  },
+  "quality": {
+    "units_without_ability_variables": 72,
+    "units_with_description_placeholders": 74,
+    "hotfix_values_verified": false,
+    "live_na_match_sample_verified": false
+  },
+  "endpoint_checks": [
+    {
+      "name": "official_champions",
+      "url": "https://ddragon.leagueoflegends.com/cdn/16.19.1/data/en_US/tft-champion.json",
+      "status": 200,
+      "bytes": 83963,
+      "last_modified": "Wed, 23 Sep 2026 21:09:11 GMT",
+      "sha256": "19723806baf2617516135c2e563ff5b6ba32a0fa876198d7e50406456bfe3d6e",
+      "version": "16.19.1",
+      "records": 344
+    },
+    {
+      "name": "official_traits",
+      "url": "https://ddragon.leagueoflegends.com/cdn/16.19.1/data/en_US/tft-trait.json",
+      "status": 200,
+      "bytes": 71552,
+      "last_modified": "Wed, 23 Sep 2026 21:09:11 GMT",
+      "sha256": "cce9fd431a61ff17d76b98bdecb16e467343813193a945e5a11bff5c93db375d",
+      "version": "16.19.1",
+      "records": 355
+    },
+    {
+      "name": "official_augments",
+      "url": "https://ddragon.leagueoflegends.com/cdn/16.19.1/data/en_US/tft-augments.json",
+      "status": 200,
+      "bytes": 245905,
+      "last_modified": "Wed, 23 Sep 2026 21:09:11 GMT",
+      "sha256": "09156852fcd8374e91f2f265cce2b2c331801902d379f0e8d755f26de8e93d42",
+      "version": "16.19.1",
+      "records": 758
+    },
+    {
+      "name": "cdragon_pinned",
+      "url": "https://raw.communitydragon.org/16.19/cdragon/tft/en_us.json",
+      "status": 200,
+      "bytes": 24177864,
+      "last_modified": "Thu, 24 Sep 2026 00:52:47 GMT",
+      "sha256": "174d4b05543aaac53d489b2a7f4f34f562cf3008f18ffcfd250f873c56d729d9",
+      "matches_downloaded_latest": true
+    },
+    {
+      "name": "cdragon_live_status",
+      "url": "https://raw.communitydragon.org/status.live.txt",
+      "status": 200,
+      "bytes": 26,
+      "last_modified": "Thu, 24 Sep 2026 18:00:03 GMT",
+      "sha256": "7e8d23d8148f4c0f9295aed571a51ca6789359cd4dadd56f08f83fe9a739ef4c",
+      "value": "2026-09-24T18:00:03Z done\n"
+    }
+  ],
+  "github_snapshot": {
+    "repo": "noxelisdev/TFT_DDragon",
+    "commit": "0f0db94593ac1e41cf897572e12d05659d63729b",
+    "committed_at": "2026-09-24T16:26:51Z",
+    "message": "Added patch 18.3",
+    "github_detected_license": null
+  },
+  "notes": [
+    "Counts include forms, summons or other non-shop entries; not a playable-roster count.",
+    "en_US is a locale, not evidence of NA-only match statistics.",
+    "Official patch notes announce the hotfix; no live NA client was opened to verify its deployment."
+  ]
+}
