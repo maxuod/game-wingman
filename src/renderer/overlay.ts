@@ -93,7 +93,6 @@ el('guide-copy').addEventListener('click', async () => {
   finally { copying = false; if (latest) render(latest); }
 });
 el('collapse-button').addEventListener('click', () => { void api.overlay('collapse'); });
-el('hide-button').addEventListener('click', () => { void api.overlay('hide'); });
 api.onState(render);
 void api.state().then(result => { if (result.ok) render(result.value); });
 setInterval(() => { if (latest) render(latest); }, 1000);

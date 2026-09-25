@@ -1,5 +1,9 @@
 # Changelog
 
+## Pinned overlay preview
+
+- Keep the floating window visible and topmost while idle and while following the game. A close event no longer dismisses it, and the overlay no longer has an accidental close button; hide it from the main window or tray when wanted.
+
 ## Automatic TFT follow preview
 
 - Show the four highest eligible top-four comps on the main window and allow one-click target selection.

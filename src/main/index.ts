@@ -258,6 +258,12 @@ function raiseOverlay() {
   overlayWindow.setAlwaysOnTop(true, process.platform === 'win32' ? 'screen-saver' : 'floating');
   if (overlayWindow.isVisible()) overlayWindow.moveTop();
 }
+function keepOverlayPinned() {
+  if (!state.overlayVisible || !overlayWindow || overlayWindow.isDestroyed()) return;
+  if (!overlayWindow.isVisible()) overlayWindow.showInactive();
+  if (!overlayWindow.isAlwaysOnTop()) overlayWindow.setAlwaysOnTop(true, process.platform === 'win32' ? 'screen-saver' : 'floating');
+  overlayWindow.moveTop();
+}
 function protectWindow(window: BrowserWindow) {
   window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   window.webContents.on('will-navigate', event => event.preventDefault());
@@ -310,7 +316,8 @@ function createOverlay() {
   raiseOverlay();
   overlayWindow.once('ready-to-show', () => showOverlay(true));
   if (process.platform === 'darwin') overlayWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-  overlayWindow.on('close', event => { if (!quitting) { event.preventDefault(); showOverlay(false); } });
+  overlayWindow.on('close', event => { if (!quitting) { event.preventDefault(); keepOverlayPinned(); } });
+  overlayWindow.on('show', keepOverlayPinned);
   overlayWindow.webContents.on('render-process-gone', () => showOverlay(false));
   void overlayWindow.loadFile(page('overlay.html'));
 }
@@ -554,9 +561,9 @@ else {
     setInterval(() => {
       liveTracker.tick();
       if (state.equipment.origin === 'ai' && state.equipment.updatedAt && Date.now() - Date.parse(state.equipment.updatedAt) >= 15000) broadcast();
-      if (state.overlayVisible && state.capture === 'active') raiseOverlay();
       if (state.guides.recommendedId && !rankGuides(state.guides.entries, state.guides.order, Date.now(), state.guides.patch).some(guide => guide.id === state.guides.recommendedId)) broadcast();
     }, 1000).unref();
+    setInterval(keepOverlayPinned, 500).unref();
     Menu.setApplicationMenu(Menu.buildFromTemplate(process.platform === 'darwin' ? [
       { label: 'Game Wingman', submenu: [{ label: '打开主窗口', click: showMain }, { type: 'separator' }, { role: 'quit' }] },
       { role: 'editMenu' }, { role: 'windowMenu' }

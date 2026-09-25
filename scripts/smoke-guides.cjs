@@ -26,6 +26,16 @@ async function until(read, condition, timeout = 10000) {
       return { top: w.isAlwaysOnTop(), focusable: w.isFocusable(), requestedVisible: w.__requestedVisible, focused: w.isFocused() };
     });
     assert.deepEqual(native, { top: true, focusable: false, requestedVisible: true, focused: false });
+    assert.equal(await overlay.locator('#hide-button').count(),0,'Pinned overlay has no accidental close control');
+    await overlay.evaluate(()=>document.getElementById('overlay-title').click());
+    assert.equal((await state()).overlayVisible,true,'Clicking content leaves overlay requested visible');
+    const closeAttempt=await app.evaluate(({BrowserWindow})=>{const window=BrowserWindow.getAllWindows().find(w=>w.webContents.getURL().endsWith('/overlay.html'));window.close();return{destroyed:window.isDestroyed(),top:window.isAlwaysOnTop()}});
+    assert.deepEqual(closeAttempt,{destroyed:false,top:true},'Window close event cannot dismiss pinned overlay');
+    await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows().find(w=>w.webContents.getURL().endsWith('/overlay.html')).setAlwaysOnTop(false));
+    await until(()=>app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows().find(w=>w.webContents.getURL().endsWith('/overlay.html')).isAlwaysOnTop()),Boolean);
+    assert.equal((await state()).capture,'idle','Topmost is restored even while no capture is active');
+    await main.evaluate(()=>window.desktop.overlay('hide'));assert.equal((await state()).overlayVisible,false);
+    await main.evaluate(()=>window.desktop.overlay('show'));assert.equal((await state()).overlayVisible,true);
     assert.equal((await overlay.evaluate(() => window.desktop.detectGame())).ok, false);
     assert.equal((await overlay.evaluate(() => window.desktop.guideSettings({ enabled: false, order: 'win', selectedId: null }))).ok, false);
     assert.equal((await main.evaluate(() => window.desktop.guideSource('https://evil.example'))).ok, false);
