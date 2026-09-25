@@ -6,7 +6,7 @@
 
 1. 退出旧版 Game Wingman，运行 `release/baseline-preview/Game Wingman-win32-x64/Game Wingman.exe`，保留整个目录。
 2. 进入测试对局后，在主窗口选择**实际游戏窗口**，点击“开始读取”，确认实时视频正确。
-3. 打开“资料与设置 → AI 识别”。已有 DeepSeek 密钥会沿用；勾选“允许 AI 请求”并保存。
+3. 打开“设置 → AI 识别”。已有 DeepSeek 密钥会沿用；勾选“允许 AI 请求”并保存。
 4. 点击“开始本次跟进”，在窗口名称、模型和预算确认框中开始本次发送。返回主界面，点击“显示浮窗”。仅开始本机读取不会发送给模型。
 5. 结束时点击“停止跟进”或“暂停读取”。核对设置中的请求数、保守核算费用及平均响应时间。费用账本在 `%APPDATA%\Game Wingman\deepseek-baseline-budget.jsonl`。
 

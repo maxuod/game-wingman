@@ -23,27 +23,23 @@ Sources are not limited to OP.GG. The [source registry](docs/data-sources.md) re
 | Desktop control window and independent always-on-top overlay | Implemented; macOS and Windows smoke-tested |
 | Selected-window preview, pause/resume, image import | Implemented; tested with synthetic windows on macOS and Windows |
 | Collapsing, transparency, click-through and recovery controls | Implemented; game-specific compatibility unverified |
-| NA Data Dragon name lookup | Manual sync, search and pinning for Set 18 champions/traits |
+| Riot Data Dragon name data | Existing cache is kept internally for entity matching; the standalone lookup panel has been removed |
 | MiniMax CN / DeepSeek / Gemini | Text and image adapters, desktop settings and OS-encrypted credentials; live synthetic probes passed |
 | Manual screenshot recognition | Per-frame confirmation, structured fields, unknown values, correction and overlay display; real TFT quality unverified |
 | Live video observation | Explicit session consent; sampled image requests every 5–15 seconds, latest fields and change history. This preview locks desktop AI to DeepSeek Flash with a persistent CNY 10 cap; [test instructions](docs/deepseek-first-test.md) |
 | OP.GG comp references | All 50 current main-page variants, Chinese search, paging, full unit/item lists, team-code copying and overlay selection. Independent win/top-four sorting, top-four by default; public refresh on startup or request |
 | Equipment | 137 items / 55 recipes; consented live equipment recognition automatically updates crafts for the selected or current recommended comp. Reference builds remain available without inventory, with source positions (39/50 boards) and on-demand per-comp augment candidates; [scope](docs/automatic-equipment.md). Real-game accuracy remains unverified |
 | Data updates | Daily startup checks official TFT patches; valid same-day cache is reused. Rankings refresh after six hours or an official change, with independent rank movements. Recipes remain versioned until official evidence is reviewed; [update rules](docs/daily-data-updates.md) |
-| Auto discovery / overlay | Unique TFT window auto-previews locally; with saved DeepSeek credentials and AI requests enabled, the app prompts for one session consent and then starts live observation. The main window shows the four highest eligible top-four comps for selection. The overlay stays pinned above other windows, including while idle, and can be hidden from the main window or tray; [scope and validation](docs/guide-preview.md) |
+| Auto discovery / coaching overlay | A unique TFT window starts local capture; enabled DeepSeek requests prompt for session consent. The main screen puts four eligible top-four comps and the selected comp's next step first. Stage, gold, health, equipment and source augment candidates update the guidance; unknown fields are not guessed. The overlay stays pinned and follows the chosen comp; [scope and validation](docs/guide-preview.md) |
 | Windows | Development app and portable package smoke-tested; real TFT testing pending |
 
 The name dictionary is **not** a tactical guide database or an NA win-rate dataset. A Data Dragon asset version does not establish the TFT patch or hotfix coverage. See the [dated data-source review](docs/tft-data-sources-2026-09-24.md).
 
 ## Interface
 
-The main screen has three primary actions: select a window, start/pause capture, and show/hide the overlay. Sources and settings live in a secondary panel. The overlay shows one item at a time.
+The main screen leads with comp selection and the next in-game action. Equipment and augment suggestions follow below; video preview is collapsed unless the player opens it to inspect capture or use manual controls. Full comp details, builds and AI settings remain in a secondary dialog. The overlay follows the chosen comp.
 
-![Game Wingman desktop control window](docs/images/main-window.png)
-
-<img src="docs/images/overlay.png" width="320" alt="Game Wingman floating overlay in its waiting state">
-
-These are application screenshots. They show the current capture/lookup shell, not completed AI recommendations. The old `design/overlay-concept.html` is an archived design study, not the product entry point.
+The images under `docs/images/` and the old `design/overlay-concept.html` document earlier prototypes; the current UI is in the application package.
 
 ## Run from source
 
@@ -70,7 +66,7 @@ Output is under `release/`. Keep the entire Windows application folder together.
 
 ## API providers
 
-Open **资料与设置 → AI 识别 → API Key 配置** to select a provider and paste your own key into the masked field. Saving uses OS encryption and clears the field. You can also import a local `.env`/JSON file or export an empty template; [api-keys.example.json](api-keys.example.json) contains only empty fields. Import recognizes provider-specific field names and never enables AI or sends a request. See the [setup guide](docs/api-providers.md).
+Open **设置 → AI 识别 → API Key 配置** to select a provider and paste your own key into the masked field. Saving uses OS encryption and clears the field. You can also import a local `.env`/JSON file or export an empty template; [api-keys.example.json](api-keys.example.json) contains only empty fields. Import recognizes provider-specific field names and never enables AI or sends a request. See the [setup guide](docs/api-providers.md).
 
 MiniMax, DeepSeek and Gemini share a text/image interface in `src/main/ai/providers.ts`. This first-test desktop preview fixes DeepSeek Flash and a persistent CNY 10 budget shared by live, manual and probe requests. Credentials remain OS-encrypted. Manual screenshots require individual confirmation; live sampling requires separate session consent. Local preview alone never uploads frames.
 
@@ -93,7 +89,7 @@ A CLI probe sends one fixed text prompt to the selected provider. Charges may ap
 
 ## Privacy and security
 
-Comp cards, inventory, crafting suggestions, source positioning and augment candidates use game icons with hover/focus names and readable fallback labels. Validated public images load on demand into a seven-day local cache without AI calls. The latest Windows preview is `release/api-config-preview/Game Wingman-win32-x64/`; exit the older app before starting it. The cumulative CNY 10 ledger is preserved.
+Comp cards, inventory, crafting suggestions, source positioning and augment candidates use game icons with hover/focus names and readable fallback labels. Validated public images load on demand into a seven-day local cache without AI calls. The latest Windows preview is `release/advice-first-preview/Game Wingman-win32-x64/`; exit the older app before starting it. The cumulative CNY 10 ledger is preserved.
 
 Desktop preview frames stay in application memory. Manual recognition sends one confirmed frame; separately consented live tracking sends sampled frames until stopped. The app does not save screenshots by default. Public entity data can be cached locally. API keys are OS-encrypted outside the source tree and never exposed through renderer IPC or bundled. See [PRIVACY.md](PRIVACY.md) and [SECURITY.md](SECURITY.md).
 

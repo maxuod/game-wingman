@@ -1,5 +1,10 @@
 # Changelog
 
+## Advice-first companion preview
+
+- Remove the standalone US name browser from the UI and put comp selection, the next in-game step, equipment and augment guidance on the main screen. Keep the live video preview available behind an expandable control.
+- Follow only the player's chosen comp in the overlay. Stage, gold and health can change the next-step prompt; stale observations or outdated comp data do not become current advice. An existing Data Dragon dictionary cache remains an internal name-matching aid.
+
 ## Pinned overlay preview
 
 - Keep the floating window visible and topmost while idle and while following the game. A close event no longer dismisses it, and the overlay no longer has an accidental close button; hide it from the main window or tray when wanted.

@@ -1,6 +1,7 @@
 import { setupEquipment, renderEquipment, renderRecipes } from './equipment.js';
 import { compBuild } from './comp-build.js';
 import { entityIcon, itemIcon, recipeIcons } from './icons.js';
+import { coachingStep } from './coaching.js';
 import type { AppState, Result, AiSettings, AiSettingsInput, CompAugments, Observation } from '../shared/types.js';
 const api = window.desktop;
 const el = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -8,7 +9,6 @@ let state: AppState;
 let stream: MediaStream | null = null;
 let timer: ReturnType<typeof setTimeout> | null = null;
 let generation = 0;
-let searchGeneration = 0;
 let busy = false;
 let liveSubmitting = false;
 let liveStarting = false;
@@ -87,7 +87,7 @@ function render(next: AppState) {
   const newlyFailed = next.error && next.error !== state?.error;
   state = next;
   document.body.classList.toggle('mac', state.platform === 'darwin');
-  el('source-name').textContent = state.inputName ?? '选择一个游戏窗口';
+  el('source-name').textContent = state.inputName ?? '等待 TFT 对局';
   el('source-name').title = state.inputName ?? '';
   el('source-detail').textContent = state.capture === 'active' ? (liveActive() ? '实时视频跟进中 · 自动识别已开启' : '实时视频预览 · 仅在本机播放') : state.capture === 'starting' ? '正在连接窗口…' : state.capture === 'paused' ? (state.source ? '已暂停 · 画面保留在本机' : '已导入截图 · 画面保留在本机') : state.source ? '窗口已选定，点击开始读取' : '开始前不会读取屏幕';
   if (!state.source && !state.inputName) el('source-detail').textContent = state.autoDetect.enabled ? state.autoDetect.message : '开始前不会读取屏幕';
@@ -101,11 +101,6 @@ function render(next: AppState) {
   el('overlay-button').setAttribute('aria-pressed', String(state.overlayVisible));
   el('capture-detail').textContent = state.capturedAt ? `最近画面 ${time(state.capturedAt)} · ${state.capture === 'active' ? '读取中' : state.source ? '已暂停' : '导入截图'} · ${liveActive() ? '已允许持续发送' : state.ai.observation ? '已发送给所选模型' : '本机预览'}` : '画面仅留在本机内存';
   el('preview-label').textContent = state.capture === 'active' ? '读取中' : state.source ? '已暂停' : '导入截图';
-  el('catalog-status').textContent = state.catalogVersion ? `Riot Data Dragon · 资源 ${state.catalogVersion} · ${state.catalogCount} 条` : '尚未同步 · Riot Data Dragon / en_US';
-  if (state.catalogCheckedAt && !el('sync-feedback').textContent) el('sync-feedback').textContent = `缓存更新于 ${new Date(state.catalogCheckedAt).toLocaleString('zh-CN')}`;
-  el<HTMLInputElement>('catalog-search').disabled = !state.catalogCount;
-  el('pinned-entry').hidden = !state.selectedEntry;
-  el('pinned-name').textContent = state.selectedEntry ? `浮窗已固定：${state.selectedEntry.name}` : '';
   el<HTMLInputElement>('opacity').value = String(Math.round(state.opacity * 100));
   el('opacity-value').textContent = `${Math.round(state.opacity * 100)}%`;
   el<HTMLButtonElement>('interaction-button').disabled = !state.overlayVisible || !state.shortcuts.interaction || !state.shortcuts.visibility;
@@ -184,7 +179,7 @@ function renderQuickGuides() {
   const guides=state.guides;
   const top=guides.freshIds.slice(0,4).map(id=>guides.entries.find(guide=>guide.id===id)).filter((guide):guide is NonNullable<typeof guide>=>!!guide);
   const signature=JSON.stringify([top.map(g=>[g.id,g.name,g.top4Rate,g.winRate,g.core,g.units.map(u=>u.iconUrl)]),guides.selectedId,guides.patch]);
-  el('quick-status').textContent=top.length?`${guides.scope} · 点击一套阵容后跟随它给出装备与海克斯参考。`:guides.loading?'正在核对当前补丁的阵容排名…':'当前补丁没有可用的近期统计，请在“阵容攻略”中刷新。';
+  el('quick-status').textContent=top.length?`${guides.patch} · 按近期前四率排序；点选后按这套阵容跟进。`:guides.loading?'正在核对当前补丁的阵容排名…':'当前补丁没有可用的近期统计，请打开“全部阵容”刷新。';
   if(signature===quickSignature)return;quickSignature=signature;
   el('quick-list').replaceChildren(...top.map((guide,index)=>{
     const button=document.createElement('button');button.className='quick-card'+(guides.selectedId===guide.id?' selected':'');button.dataset.guideId=guide.id;
@@ -217,9 +212,16 @@ function renderAdvice() {
   const fields=age<15000?observation?.fields:null;
   const guide=state.guides.entries.find(g=>g.id===selected);
   const craft=guide&&state.equipment.guideId===guide.id?state.equipment.recommendations[0]:null;
-  const signature=JSON.stringify([selected,fields,craft,state.equipment.origin,augmentResult,augmentError,state.capture,state.live.phase,autoFollowAttemptedEpoch,settings?.enabled,settings?.providers.find(p=>p.provider==='deepseek')?.hasKey]);
+  const signature=JSON.stringify([selected,guide,fields,craft,state.equipment.origin,augmentResult,augmentError,state.capture,state.live.phase,autoFollowAttemptedEpoch,settings?.enabled,settings?.providers.find(p=>p.provider==='deepseek')?.hasKey,state.guides.freshIds]);
   if(signature===adviceSignature)return;adviceSignature=signature;
   const aiReady=!!settings?.enabled&&!!settings.providers.find(p=>p.provider==='deepseek')?.hasKey;
+  const currentGuide=!!guide&&state.guides.freshIds.includes(guide.id);
+  const next=coachingStep(guide??null,fields??null,currentGuide);
+  el('advice-selected').textContent=guide?`已选：${guide.name}`:'尚未选择阵容';
+  el('advice-next-title').textContent=next.title;
+  el('advice-next-detail').textContent=next.detail;
+  el<HTMLButtonElement>('advice-build').disabled=!currentGuide;
+  el<HTMLButtonElement>('advice-copy').disabled=!currentGuide;
   const stage=el('advice-stage');
   stage.textContent=fields?`本局 ${fields.stage??'阶段未知'} · ${fields.gold??'?'} 金币 · ${fields.hp??'?'} 生命 · ${fields.level??'?'} 级。${selected?'正在跟随所选阵容。':'选一套阵容，开始显示针对它的装备建议。'}`:
     state.capture==='active'&&!liveActive()?(aiReady&&autoFollowAttemptedEpoch===state.epoch?'本次 AI 跟进未开启，可在“AI 识别”中重新开启。':'已读取本机画面；在“AI 识别”配置 DeepSeek 并允许请求后，可开启持续跟进。'):
@@ -232,7 +234,7 @@ function renderAdvice() {
   const augmentArea=el('advice-augment');augmentArea.replaceChildren();
   if(!selected)augmentArea.textContent='海克斯：选择阵容后读取该阵容的来源候选。';
   else if(augmentError)augmentArea.textContent=`海克斯：${augmentError}。可打开阵容详情查看来源。`;
-  else if(!liveActive())augmentArea.textContent='海克斯：开始本局跟进后自动读取所选阵容的来源候选，也可在阵容详情手动展开。';
+  else if(!liveActive())augmentArea.textContent='海克斯：本局跟进开始后显示当前阶段的来源候选；也可在阵容详情查看。';
   else if(!augmentResult)augmentArea.textContent='海克斯：正在读取所选阵容的来源候选…';
   else {
     const options=fields?.stage?augmentResult.entries.filter(a=>a.rounds.includes(fields.stage!)).slice(0,3):[];
@@ -328,30 +330,11 @@ async function loadSources() {
     })); list.append(button);
   }
 }
-async function searchCatalog() {
-  const current = ++searchGeneration;
-  const result = unwrap(await api.search(el<HTMLInputElement>('catalog-search').value));
-  if (current !== searchGeneration) return;
-  const list = el('catalog-results'); list.replaceChildren();
-  if (!state.catalogCount) return;
-  if (!result.length) { const empty = document.createElement('p'); empty.textContent = '没有匹配的英文名称。'; list.append(empty); }
-  for (const entry of result) {
-    const button = document.createElement('button'); button.className = 'catalog-row';
-    button.setAttribute('aria-pressed', String(state.selectedEntry?.id === entry.id));
-    button.title = '固定到浮窗';
-    const name = document.createElement('span'); name.textContent = entry.name;
-    const meta = document.createElement('span'); meta.textContent = entry.kind === 'trait' ? '羁绊' : `${entry.cost ?? '?'} 金币`;
-    button.append(name, meta);
-    button.addEventListener('click', () => run(async () => { unwrap(await api.selectEntry(entry.id)); unwrap(await api.overlay('show')); await searchCatalog(); }));
-    list.append(button);
-  }
-}
-
 el('choose-source').addEventListener('click', () => { el<HTMLDialogElement>('source-dialog').showModal(); run(loadSources); });
 el('refresh-sources').addEventListener('click', () => run(loadSources));
 el('capture-button').addEventListener('click', () => run(startCapture));
 el('overlay-button').addEventListener('click', () => run(async () => unwrap(await api.overlay('toggle'))));
-el('settings-button').addEventListener('click', () => { el<HTMLDialogElement>('settings-dialog').showModal(); run(searchCatalog); });
+el('settings-button').addEventListener('click', () => { el<HTMLDialogElement>('settings-dialog').showModal(); selectTab('ai'); });
 el('help-button').addEventListener('click', () => run(async () => unwrap(await api.help())));
 el('permission-button').addEventListener('click', () => run(async () => unwrap(await api.settings())));
 el('dismiss-notice').addEventListener('click', () => { el('notice').hidden = true; });
@@ -360,23 +343,11 @@ el('import-button').addEventListener('click', () => run(async () => {
   const input = unwrap(await api.importImage());
   if (input) { showFrame(input.data); el('notice').hidden = true; }
 }));
-el('sync-button').addEventListener('click', () => run(async () => {
-  const button = el<HTMLButtonElement>('sync-button'); button.disabled = true; button.textContent = '同步中…';
-  el('sync-feedback').textContent = '';
-  try {
-    unwrap(await api.syncCatalog());
-    el('sync-feedback').textContent = `已同步 en_US 名称字典 · ${state.catalogCheckedAt ? new Date(state.catalogCheckedAt).toLocaleString('zh-CN') : ''}`;
-    await searchCatalog();
-  } catch (error) { el('sync-feedback').textContent = error instanceof Error ? error.message : '同步失败，请重试。'; }
-  finally { button.disabled = false; button.textContent = '同步资料'; }
-}));
-el('catalog-search').addEventListener('input', () => run(searchCatalog));
-el('clear-entry').addEventListener('click', () => run(async () => { unwrap(await api.selectEntry(null)); await searchCatalog(); }));
 el('interaction-button').addEventListener('click', () => run(async () => unwrap(await api.overlay('interaction'))));
 el('reset-overlay').addEventListener('click', () => run(async () => { unwrap(await api.overlay('reset')); unwrap(await api.overlay('show')); }));
 el<HTMLInputElement>('opacity').addEventListener('input', event => run(async () => unwrap(await api.opacity(Number((event.target as HTMLInputElement).value) / 100))));
 document.querySelectorAll<HTMLElement>('[data-close]').forEach(button => button.addEventListener('click', () => el<HTMLDialogElement>(button.dataset.close!).close()));
-const settingsTabs = ['guide', 'equipment', 'data', 'overlay', 'ai'];
+const settingsTabs = ['guide', 'equipment', 'overlay', 'ai'];
 function selectTab(name: string) {
   for (const id of settingsTabs) {
     const selected = id === name;
@@ -487,8 +458,15 @@ el('guide-refresh').addEventListener('click', () => run(async () => unwrap(await
 el('official-source').addEventListener('click', () => run(async () => unwrap(await api.officialSource())));
 el('guide-shortcut').addEventListener('click', () => { el<HTMLDialogElement>('settings-dialog').showModal(); selectTab('guide'); });
 el('quick-all').addEventListener('click', () => { el<HTMLDialogElement>('settings-dialog').showModal(); selectTab('guide'); });
+el('advice-build').addEventListener('click', () => { if(!state.guides.selectedId)return;el<HTMLDialogElement>('settings-dialog').showModal();selectTab('equipment');el('equipment-build').scrollIntoView({block:'nearest'}); });
+el('advice-copy').addEventListener('click', () => run(async () => {
+  const selected=state.guides.selectedId;if(!selected)return;
+  const button=el<HTMLButtonElement>('advice-copy');button.disabled=true;
+  try{unwrap(await api.guideCopy(selected));button.textContent='已复制阵容码';}
+  finally{setTimeout(()=>{button.textContent='复制阵容码';button.disabled=!state.guides.freshIds.includes(state.guides.selectedId??'');},2000);}
+}));
 window.addEventListener('beforeunload', stopStream);
 api.onState(render);
-setInterval(() => { if (state) renderLive(); }, 1000);
+setInterval(() => { if (state) { renderLive(); renderAdvice(); } }, 1000);
 setInterval(() => run(discoverGame), 5000);
 run(async () => { render(unwrap(await api.state())); renderSettings(unwrap(await api.aiSettings())); await discoverGame(); });
