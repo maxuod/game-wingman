@@ -20,6 +20,7 @@
 
 - 桌面主窗口、独立置顶浮窗、收起、透明度、点击穿透与恢复入口。
 - 浮窗默认显示、保持置顶且不抢游戏焦点；自动查找唯一游戏窗口并开始本机预览，支持独立 TFT 客户端。
+- 主窗口直接列出当前补丁、近期有效统计中前四率最高的 4 套阵容，点击即可选为目标。自动找到唯一 TFT 游戏窗口后开始读取本机画面；如已保存 DeepSeek 密钥并启用 AI 请求，会弹出本局持续跟进确认，确认后自动识别并随画面更新装备合成和所选阵容的海克斯候选。没有读清的装备不推断可合成；海克斯仅为来源候选，需要核对本局实际选项。
 - 选择一个窗口后播放实时本机视频；暂停、继续、关闭源窗口后停止；支持导入截图。
 - 美服 Data Dragon 的 Set 18 英雄 / 羁绊名称字典，可手动同步、搜索和固定到浮窗。
 - MiniMax 国内、DeepSeek、Gemini 文本 / 图片接口，桌面模型设置、系统加密凭据和手动文字连接测试。
@@ -93,7 +94,7 @@ npm run api:check -- minimax --probe
 
 [试用说明](docs/usage.md) · [路线图](docs/roadmap.md) · [隐私说明](PRIVACY.md) · [安全反馈](SECURITY.md) · [贡献说明](CONTRIBUTING.md) · [更新记录](CHANGELOG.md)
 
-最新 Windows 包位于 `release/api-config-preview/Game Wingman-win32-x64/`，先退出旧版再运行。保留累计 DeepSeek ¥10 预算。后续验证真实 TFT 装备识别与当前客户端的阵容码导入。
+最新 Windows 包位于 `release/auto-follow-preview/Game Wingman-win32-x64/`，先从托盘退出旧版再运行；同名旧实例会拦截新版启动。保留累计 DeepSeek ¥10 预算。后续验证真实 TFT 装备识别与当前客户端的阵容码导入。
 
 ## 许可证
 

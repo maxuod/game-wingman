@@ -1,5 +1,11 @@
 # Changelog
 
+## Automatic TFT follow preview
+
+- Show the four highest eligible top-four comps on the main window and allow one-click target selection.
+- After unique TFT window discovery, begin local capture and request session consent automatically when DeepSeek is configured and enabled. Accepted sessions update visible HUD and equipment crafts; the selected comp's source augment candidates appear at their eligible stage. No consent means no paid frames.
+- Keep the older running process from masking the new portable build: exit the old app from its tray before launching the new directory.
+
 ## Unreleased
 
 - Add a masked, provider-specific API Key field with OS-encrypted storage, multi-provider `.env`/JSON import, empty template export and per-provider removal. Saving/importing does not enable AI or test credentials; no saved secrets return through IPC. Publish empty configuration templates and retain the existing cumulative DeepSeek CNY 10 cap.

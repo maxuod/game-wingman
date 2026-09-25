@@ -31,6 +31,13 @@ async function until(read, condition, timeout = 10000) {
     assert.equal((await main.evaluate(() => window.desktop.guideSource('https://evil.example'))).ok, false);
     assert.equal((await state()).guides.order, 'top4');
     const defaultGuide = rankGuides(REVIEWED_GUIDES, 'top4')[0];
+    const topFour=rankGuides(REVIEWED_GUIDES,'top4').slice(0,4).map(g=>g.id);
+    assert.deepEqual(await until(()=>main.locator('#quick-list .quick-card').evaluateAll(cards=>cards.map(card=>card.dataset.guideId)),ids=>ids.length===4),topFour);
+    assert.match(await main.locator('#quick-status').textContent(),/点击一套阵容/);
+    await main.screenshot({path:path.join(artifacts,'auto-four-comps.png')});
+    await main.locator('#quick-list .quick-card').nth(1).click();
+    await until(state,s=>s.guides.selectedId===topFour[1]);
+    await main.evaluate(()=>window.desktop.guideSettings({enabled:true,order:'top4',selectedId:null}));
     const ashe = REVIEWED_GUIDES.find(g => g.id === 'e8b7afe7f6f89da628eea8d25607e99f');
     assert.equal(await overlay.locator('#overlay-title').textContent(), defaultGuide.name);
     await main.evaluate(() => { document.getElementById('settings-dialog').showModal(); document.getElementById('guide-tab').click(); });
@@ -169,6 +176,39 @@ async function until(read, condition, timeout = 10000) {
     const restoredKeys=await restarted.evaluate(async()=>(await window.desktop.aiSettings()).value);
     assert.equal(restoredKeys.providers.find(p=>p.provider==='deepseek').hasKey,true);assert.equal(restoredKeys.providers.find(p=>p.provider==='gemini').hasKey,false);assert.equal(restoredKeys.providers.find(p=>p.provider==='minimax').hasKey,true);
     assert.equal(await restarted.locator('#ai-key').inputValue(),'');
+    await app.evaluate(({dialog})=>{
+      global.__testSources=[{id:'window:313:0',name:'TFT'}];global.__autoAiCalls=0;global.__autoConsents=0;
+      dialog.showMessageBox=async()=>{global.__autoConsents++;return{response:1}};
+      global.fetch=async(url)=>{
+        if(url==='https://api.deepseek.com/chat/completions'){
+          global.__autoAiCalls++;
+          return new Response(JSON.stringify({choices:[{finish_reason:'stop',message:{content:JSON.stringify({stage:'2-1',gold:30,hp:100,level:4,entities:[],equipment:{components:[],completed:[]}})}}],usage:{prompt_tokens:1000,completion_tokens:120}}));
+        }
+        throw new Error('Unexpected network in automatic follow fixture');
+      };
+    });
+    await restarted.evaluate(()=>{
+      navigator.mediaDevices.getDisplayMedia=async()=>{
+        const canvas=document.createElement('canvas');canvas.width=640;canvas.height=360;
+        const context=canvas.getContext('2d');context.fillStyle='#abc';context.fillRect(0,0,640,360);
+        const stream=canvas.captureStream(15);let n=0;
+        const interval=setInterval(()=>{if(stream.getVideoTracks()[0].readyState==='ended'){clearInterval(interval);return;}context.fillStyle=n++%2?'#abc':'#acb';context.fillRect(0,0,640,360);},100);
+        return stream;
+      };
+    });
+    await restarted.evaluate(()=>window.desktop.detectGame());
+    const automatic=await until(async()=>({state:await restarted.evaluate(async()=>(await window.desktop.state()).value),calls:await app.evaluate(()=>global.__autoAiCalls)}),value=>value.state.capture==='active'&&['watching','running'].includes(value.state.live.phase)&&value.calls>0,20000).then(value=>value.state).catch(async error=>{
+      const current=await restarted.evaluate(async()=>(await window.desktop.state()).value);
+      console.error(JSON.stringify({capture:current.capture,source:current.source,autoDetect:current.autoDetect,live:current.live.phase,liveMessage:current.live.message,budget:current.budget.message,requests:current.budget.requests,aiEnabled:(await restarted.evaluate(async()=>(await window.desktop.aiSettings()).value)).enabled,consents:await app.evaluate(()=>global.__autoConsents),mockCalls:await app.evaluate(()=>global.__autoAiCalls),notice:await restarted.locator('#notice').textContent()}));
+      throw error;
+    });
+    assert.equal(automatic.source.id,'window:313:0');
+    assert.equal(await app.evaluate(()=>global.__autoConsents),1,'One session consent after automatic capture');
+    assert.equal(await app.evaluate(()=>global.__autoAiCalls),1,'Only the selected synthetic game frame was sent');
+    await until(()=>restarted.evaluate(async()=>(await window.desktop.state()).value.live.observation),Boolean);
+    assert.match(await restarted.locator('#advice-stage').textContent(),/本局 2-1/);
+    await restarted.screenshot({path:path.join(artifacts,'auto-follow-dashboard.png')});
+    report.autoFollow='Unique TFT source auto-captured; one explicit session consent; mock DeepSeek observation started without clicking follow';
     await fs.writeFile(path.join(artifacts, 'report.json'), JSON.stringify(report, null, 2)); console.log(JSON.stringify(report, null, 2));
   } finally {
     await app.close();

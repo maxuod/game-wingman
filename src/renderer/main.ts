@@ -1,7 +1,7 @@
 import { setupEquipment, renderEquipment, renderRecipes } from './equipment.js';
 import { compBuild } from './comp-build.js';
-import { entityIcon, itemIcon } from './icons.js';
-import type { AppState, Result, AiSettings, AiSettingsInput, Observation } from '../shared/types.js';
+import { entityIcon, itemIcon, recipeIcons } from './icons.js';
+import type { AppState, Result, AiSettings, AiSettingsInput, CompAugments, Observation } from '../shared/types.js';
 const api = window.desktop;
 const el = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 let state: AppState;
@@ -14,7 +14,13 @@ let liveSubmitting = false;
 let liveStarting = false;
 let autoBusy = false;
 let autoEpoch = -1;
+let autoFollowAttemptedEpoch = -1;
 let guideSignature = '';
+let quickSignature = '';
+let adviceSignature = '';
+let augmentKey = '';
+let augmentResult: CompAugments | null = null;
+let augmentError = '';
 let guidePage = 0;
 const GUIDE_PAGE_SIZE = 10;
 let settings: AiSettings | null = null;
@@ -126,6 +132,8 @@ function render(next: AppState) {
   renderLive();
   renderGuides();
   renderEquipment(state);
+  renderQuickGuides();
+  renderAdvice();
   // IPC replies and state broadcasts may arrive in either order. Start from the
   // rendered state so finding a window cannot leave it selected but never previewed.
   if (state.autoDetect.status === 'found') queueMicrotask(startDiscoveredCapture);
@@ -172,6 +180,66 @@ function renderGuides() {
   }));
   if(!page.length){const empty=document.createElement('p');empty.textContent='没有匹配的阵容，请换个关键词。';el('guide-results').append(empty);}
 }
+function renderQuickGuides() {
+  const guides=state.guides;
+  const top=guides.freshIds.slice(0,4).map(id=>guides.entries.find(guide=>guide.id===id)).filter((guide):guide is NonNullable<typeof guide>=>!!guide);
+  const signature=JSON.stringify([top.map(g=>[g.id,g.name,g.top4Rate,g.winRate,g.core,g.units.map(u=>u.iconUrl)]),guides.selectedId,guides.patch]);
+  el('quick-status').textContent=top.length?`${guides.scope} · 点击一套阵容后跟随它给出装备与海克斯参考。`:guides.loading?'正在核对当前补丁的阵容排名…':'当前补丁没有可用的近期统计，请在“阵容攻略”中刷新。';
+  if(signature===quickSignature)return;quickSignature=signature;
+  el('quick-list').replaceChildren(...top.map((guide,index)=>{
+    const button=document.createElement('button');button.className='quick-card'+(guides.selectedId===guide.id?' selected':'');button.dataset.guideId=guide.id;
+    button.title=`${guide.name} · 前四 ${guide.top4Rate}% · 吃鸡 ${guide.winRate}%`;
+    button.setAttribute('aria-label',`选择第 ${index+1} 名 ${guide.name}，前四率 ${guide.top4Rate}%`);
+    const title=document.createElement('strong');title.textContent=`${index+1}. ${guide.name.split('/')[0].trim()}`;
+    const icons=document.createElement('span');icons.className='quick-card-icons';
+    for(const name of guide.core.slice(0,3))icons.append(entityIcon(name,guide.units.find(u=>u.name===name)?.iconUrl,{kind:'champion',focus:false}));
+    const rate=document.createElement('small');rate.textContent=`前四 ${guide.top4Rate}% · 吃鸡 ${guide.winRate}%`;
+    button.append(title,icons,rate);
+    button.addEventListener('click',()=>run(async()=>{unwrap(await api.guideSettings({enabled:true,order:'top4',selectedId:guide.id}));unwrap(await api.overlay('show'));}));
+    return button;
+  }));
+}
+function renderAdvice() {
+  const selected=state.guides.selectedId;
+  const key=selected&&liveActive()?`${state.guides.patch}:${selected}`:'';
+  if(key!==augmentKey){
+    augmentKey=key;augmentResult=null;augmentError='';
+    if(selected&&key){
+      void api.guideAugments(selected).then(result=>{
+        if(augmentKey!==key)return;
+        if(result.ok)augmentResult=result.value;else augmentError=result.error;
+        adviceSignature='';renderAdvice();
+      }).catch(()=>{if(augmentKey===key){augmentError='海克斯来源暂不可用';adviceSignature='';renderAdvice();}});
+    }
+  }
+  const observation=liveActive()?state.live.observation:state.ai.observation;
+  const age=observation?Date.now()-Date.parse(observation.capturedAt):Infinity;
+  const fields=age<15000?observation?.fields:null;
+  const guide=state.guides.entries.find(g=>g.id===selected);
+  const craft=guide&&state.equipment.guideId===guide.id?state.equipment.recommendations[0]:null;
+  const signature=JSON.stringify([selected,fields,craft,state.equipment.origin,augmentResult,augmentError,state.capture,state.live.phase,autoFollowAttemptedEpoch,settings?.enabled,settings?.providers.find(p=>p.provider==='deepseek')?.hasKey]);
+  if(signature===adviceSignature)return;adviceSignature=signature;
+  const aiReady=!!settings?.enabled&&!!settings.providers.find(p=>p.provider==='deepseek')?.hasKey;
+  const stage=el('advice-stage');
+  stage.textContent=fields?`本局 ${fields.stage??'阶段未知'} · ${fields.gold??'?'} 金币 · ${fields.hp??'?'} 生命 · ${fields.level??'?'} 级。${selected?'正在跟随所选阵容。':'选一套阵容，开始显示针对它的装备建议。'}`:
+    state.capture==='active'&&!liveActive()?(aiReady&&autoFollowAttemptedEpoch===state.epoch?'本次 AI 跟进未开启，可在“AI 识别”中重新开启。':'已读取本机画面；在“AI 识别”配置 DeepSeek 并允许请求后，可开启持续跟进。'):
+    '等待 TFT 游戏画面；阵容排名可以先查看和选择。';
+  const craftArea=el('advice-craft');craftArea.replaceChildren();
+  if(selected){
+    craftArea.append(document.createTextNode(craft?'装备：现在可优先合成 ':'装备：等待读清己方散件；目标配装可在“装备合成”查看。'));
+    if(craft){const item=state.equipment.reference.items.find(i=>i.id===craft.itemId);if(item)craftArea.append(recipeIcons(item,state.equipment.reference,true));if(craft.champion)craftArea.append(document.createTextNode(` 给 ${craft.champion}`));}
+  }else craftArea.textContent='装备：选择阵容后按目标配装计算。';
+  const augmentArea=el('advice-augment');augmentArea.replaceChildren();
+  if(!selected)augmentArea.textContent='海克斯：选择阵容后读取该阵容的来源候选。';
+  else if(augmentError)augmentArea.textContent=`海克斯：${augmentError}。可打开阵容详情查看来源。`;
+  else if(!liveActive())augmentArea.textContent='海克斯：开始本局跟进后自动读取所选阵容的来源候选，也可在阵容详情手动展开。';
+  else if(!augmentResult)augmentArea.textContent='海克斯：正在读取所选阵容的来源候选…';
+  else {
+    const options=fields?.stage?augmentResult.entries.filter(a=>a.rounds.includes(fields.stage!)).slice(0,3):[];
+    augmentArea.append(document.createTextNode(options.length?`海克斯：${fields!.stage} 来源候选（按来源顺序，核对本局选项）`:'海克斯：2-1 / 3-2 / 4-2 显示该阶段来源候选；本局选项仍需核对。'));
+    for(const augment of options)augmentArea.append(entityIcon(augment.name,augment.iconUrl,{kind:'augment',focus:false}));
+  }
+}
 async function discoverGame() {
   if (!state || autoBusy || busy || stream || !state.autoDetect.enabled || state.source || state.inputName || state.capture !== 'idle') return;
   autoBusy = true;
@@ -182,7 +250,18 @@ async function discoverGame() {
 function startDiscoveredCapture() {
   if (!state || busy || stream || !state.autoDetect.enabled || state.autoDetect.status !== 'found' || !state.source ||
     state.capture !== 'idle' || state.epoch === autoEpoch) return;
-  autoEpoch = state.epoch; run(startCapture);
+  autoEpoch = state.epoch;
+  run(async()=>{
+    await startCapture();
+    await maybeAutoFollow();
+  });
+}
+async function maybeAutoFollow() {
+  if(!state||state.capture!=='active'||!state.autoDetect.enabled||state.autoDetect.status!=='found'||
+    autoFollowAttemptedEpoch===state.epoch||liveActive()||liveStarting||!state.budget.ready||
+    !settings?.enabled||!settings.providers.find(p=>p.provider==='deepseek')?.hasKey)return;
+  autoFollowAttemptedEpoch=state.epoch;renderAdvice();
+  await startTracking();
 }
 async function pause(reason?: string) {
   stopStream(); unwrap(await api.captureState('paused', state.epoch, reason));
@@ -331,6 +410,7 @@ function renderSettings(value: AiSettings) {
   el<HTMLInputElement>('ai-enabled').checked = value.enabled;
   renderProvider();
   renderKeyStatus();
+  if(state){renderAdvice();queueMicrotask(()=>run(maybeAutoFollow));}
 }
 function renderKeyStatus(){
   const item=settings?.providers.find(p=>p.provider===el<HTMLSelectElement>('ai-key-provider').value);
@@ -406,6 +486,7 @@ el('guide-auto').addEventListener('click', () => run(async () => unwrap(await ap
 el('guide-refresh').addEventListener('click', () => run(async () => unwrap(await api.guideRefresh())));
 el('official-source').addEventListener('click', () => run(async () => unwrap(await api.officialSource())));
 el('guide-shortcut').addEventListener('click', () => { el<HTMLDialogElement>('settings-dialog').showModal(); selectTab('guide'); });
+el('quick-all').addEventListener('click', () => { el<HTMLDialogElement>('settings-dialog').showModal(); selectTab('guide'); });
 window.addEventListener('beforeunload', stopStream);
 api.onState(render);
 setInterval(() => { if (state) renderLive(); }, 1000);
