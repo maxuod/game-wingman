@@ -1,5 +1,6 @@
 import type { AppState } from '../shared/types.js';
 import { entityIcon, recipeIcons, symbol } from './icons.js';
+import { coachingStep } from './coaching.js';
 const api = window.desktop;
 const el = (id: string) => document.getElementById(id)!;
 let latest: AppState | null = null;
@@ -9,7 +10,6 @@ let visualSignature='';
 function render(state: AppState) {
   latest = state;
   let visualKey='', visual: (()=>HTMLElement[])|null=null;
-  const entry = state.selectedEntry;
   const observation = state.ai.observation;
   document.body.classList.toggle('click-through', state.clickThrough);
   el('overlay-dot').classList.toggle('active', state.capture === 'active');
@@ -19,13 +19,13 @@ function render(state: AppState) {
   el('collapse-button').setAttribute('aria-expanded', String(!state.collapsed));
   el('collapse-button').setAttribute('aria-label', state.collapsed ? '展开浮窗' : '收起浮窗');
   el('collapse-button').title = state.collapsed ? '展开浮窗' : '收起浮窗';
-  el('entry-kind').textContent = entry ? '手动固定 · 名称资料' : '游戏画面';
-  el('overlay-title').textContent = entry?.name ?? (state.capturedAt ? '画面已就绪' : '等待画面');
-  el('overlay-title').title = entry?.name ?? '';
-  el('overlay-description').textContent = entry ? `${entry.kind === 'trait' ? '羁绊' : `${entry.cost ?? '?'} 金币`} · Set 18 · en_US` : state.capturedAt ? '可在主窗口识别这一帧，或选择阵容查看装备合成。' : '在主窗口选择游戏窗口并开始读取。';
-  el('overlay-source').textContent = entry ? `Riot Data Dragon · 资源 ${state.catalogVersion}` : '试用版 · 手动识别需确认发送';
+  el('entry-kind').textContent = '本局建议';
+  el('overlay-title').textContent = state.capturedAt ? '画面已就绪' : '等待画面';
+  el('overlay-title').title = '';
+  el('overlay-description').textContent = state.capturedAt ? '请在主窗口选择阵容，开始按目标跟进。' : '等待 TFT 游戏窗口；也可在主窗口手动选择。';
+  el('overlay-source').textContent = '先选阵容，再看本局建议';
   const captured = state.capturedAt ? new Date(state.capturedAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : null;
-  el('overlay-time').textContent = state.clickThrough ? `${state.platform === 'darwin' ? '⌘' : 'Ctrl'} Shift I 恢复点击` : entry ? '名称字典 · 热修覆盖未确认' : captured ? `最近画面 ${captured}${state.capture !== 'active' ? ' · 已停止更新' : ''}` : '等待画面 · 阵容与装备见主窗口';
+  el('overlay-time').textContent = state.clickThrough ? `${state.platform === 'darwin' ? '⌘' : 'Ctrl'} Shift I 恢复点击` : captured ? `最近画面 ${captured}${state.capture !== 'active' ? ' · 已停止更新' : ''}` : '等待画面 · 阵容与装备见主窗口';
   if (observation) {
     el('entry-kind').textContent = observation.corrected ? '画面字段 · 已由你确认' : 'AI 识别 · 待核对';
     el('overlay-title').textContent = `阶段 ${observation.fields.stage ?? '未知'}`;
@@ -46,19 +46,20 @@ function render(state: AppState) {
     el('overlay-source').textContent = !following ? live.message : live.events[0]?.summary ?? '等待阶段、金币、生命和等级变化';
     if (!state.clickThrough) el('overlay-time').textContent = `DeepSeek · ${age === null ? '尚无结果' : `${age} 秒前`} · ¥${(state.budget.chargedMicros / 1e6).toFixed(3)} / 10`;
   }
-  const guide = state.guides.entries.find(item => item.id === state.guides.recommendedId);
+  const guide = state.guides.entries.find(item => item.id === state.guides.selectedId);
   el('guide-source').hidden = !guide;
   el('guide-copy').hidden = !guide;
   el('guide-copy').textContent = copyFeedback && copyFeedback.id === guide?.id && Date.now() < copyFeedback.expiresAt ? copyFeedback.text : '复制阵容码';
   (el('guide-copy') as HTMLButtonElement).disabled = copying;
   if (state.guides.enabled) {
     if (guide) {
-      el('entry-kind').textContent = state.guides.selectedId ? '阵容目标 · 已固定' : `${state.guides.order === 'win' ? '吃鸡率' : '前四率'}优先 · ${state.guides.entries.length} 套阵容及变体`;
+      el('entry-kind').textContent = '所选阵容 · 本局建议';
       el('overlay-title').textContent = guide.name; el('overlay-title').title = guide.name;
       const observed = live.phase !== 'off' ? live.observation : observation;
       const age = observed ? Math.max(0, Math.floor((Date.now() - Date.parse(observed.capturedAt)) / 1000)) : null;
-      const hud = observed ? `阶段 ${observed.fields.stage ?? '?'} · 金币 ${observed.fields.gold ?? '?'} · ${age}秒前${!following || age! >= 15 ? '（静态）' : ''}` : '终盘参考 · 等待画面识别';
-      el('overlay-description').textContent = hud;
+      const fields=observed && age!==null && age<15 ? observed.fields : null;
+      const step=coachingStep(guide,fields,state.guides.freshIds.includes(guide.id));
+      el('overlay-description').textContent = `${step.title}：${step.detail}`;
       visualKey=JSON.stringify(['core',guide.id,guide.units]);
       visual=()=>guide.core.slice(0,3).map(name=>entityIcon(name,guide.units.find(u=>u.name===name)?.iconUrl,{kind:'champion',detail:'阵容核心'}));
       const equipment = state.equipment;
@@ -73,18 +74,18 @@ function render(state: AppState) {
         }
       }
       el('overlay-source').textContent = `吃鸡 ${guide.winRate}% · 前四 ${guide.top4Rate}% · 同类 ${guide.games.toLocaleString('zh-CN')}局`;
-      if (!state.clickThrough) el('overlay-time').textContent = `${guide.patch} · OP.GG全服/全段位 · 热修未隔离`;
+      if (!state.clickThrough) el('overlay-time').textContent = fields ? `阶段 ${fields.stage??'?'} · ${age}秒前 · ${guide.patch}` : `${guide.patch} · 等待本局识别`;
     } else {
-      el('entry-kind').textContent = '阵容参考待更新'; el('overlay-title').textContent = '暂无有效统计';
-      el('overlay-description').textContent = '核查快照过期或版本不符，请在阵容攻略中刷新并核对来源。';
+      el('entry-kind').textContent = '等待选择阵容'; el('overlay-title').textContent = '选一套阵容';
+      el('overlay-description').textContent = state.guides.freshIds.length ? '在主窗口选择阵容后，我会按对局阶段给出下一步建议。' : '当前没有有效阵容排名，请在主窗口刷新。';
     }
   }
   el('overlay-visual').hidden=!visual;
   if(visualKey!==visualSignature){visualSignature=visualKey;el('overlay-visual').replaceChildren(...(visual?visual():[]));}
 }
-el('guide-source').addEventListener('click', () => { if (latest?.guides.recommendedId) void api.guideSource(latest.guides.recommendedId); });
+el('guide-source').addEventListener('click', () => { if (latest?.guides.selectedId) void api.guideSource(latest.guides.selectedId); });
 el('guide-copy').addEventListener('click', async () => {
-  const id = latest?.guides.recommendedId; if (!id || copying) return;
+  const id = latest?.guides.selectedId; if (!id || copying) return;
   copying = true; if (latest) render(latest);
   try {
     const result = await api.guideCopy(id);

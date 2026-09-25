@@ -494,7 +494,7 @@ function installHandlers() {
   });
   handle('help', async () => { await dialog.showMessageBox(mainWindow, {
     type: 'info', title: 'Game Wingman · 试用说明', message: '桌面试用版 0.1',
-    detail: '选择一个窗口后开始读取实时本机视频。暂停会释放读取流。浮窗可以拖动、收起、隐藏或点击穿透。\n\n⌘/Ctrl + Shift + O：显示 / 隐藏浮窗\n⌘/Ctrl + Shift + I：切换点击穿透\n菜单栏 / 托盘可随时恢复主窗口。\n\n在资料与设置 → AI 识别中配置模型。点击“识别这一帧”会暂停读取，并在确认后仅向所选提供方发送这一张截图，可能产生费用。结果需人工核对；可另行确认开启持续跟进，每 5–15 秒识别一次；本次固定 DeepSeek，总预算 ¥10，跨重启累计。暂停或换窗即停止。没有自动重试、跨提供方回退或战术建议。密钥仅在主进程通过系统加密存储使用。\n\n资料面板可主动同步 Riot Data Dragon 的美服 en_US Set 18 名称字典，资源版本不代表 TFT 补丁或热修已覆盖。\n\n本项目未获 Riot 官方认可。实验产品可能存在封号风险，不保证账号安全或识别准确性。'
+    detail: '先选一套阵容。识别到 TFT 游戏窗口后，软件会自动读取本机视频；配置 DeepSeek 并允许请求后，可确认开启持续跟进。主界面和浮窗会按所选阵容、最近识别的阶段、金币、生命和装备给出下一步参考，海克斯候选需与本局选项核对。画面或字段不清时会提示等待，不会猜测商店或对手。\n\n视频预览和手动识别在主界面的“查看游戏画面与手动操作”中。暂停会释放读取流。设置中的 AI 请求可能产生费用，本次累计上限 ¥10，跨重启计算；暂停或换窗即停止。密钥仅在本机加密保存。\n\n⌘/Ctrl + Shift + O：显示 / 隐藏浮窗\n⌘/Ctrl + Shift + I：切换点击穿透\n菜单栏 / 托盘可随时恢复主窗口。\n\n本项目未获 Riot 官方认可。建议和识别可能出错，关键操作请按实际对局核对。'
   }); });
   handle('settings', async () => {
     if (process.platform === 'darwin') await shell.openExternal('x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture');

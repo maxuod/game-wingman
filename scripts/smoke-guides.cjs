@@ -43,13 +43,18 @@ async function until(read, condition, timeout = 10000) {
     const defaultGuide = rankGuides(REVIEWED_GUIDES, 'top4')[0];
     const topFour=rankGuides(REVIEWED_GUIDES,'top4').slice(0,4).map(g=>g.id);
     assert.deepEqual(await until(()=>main.locator('#quick-list .quick-card').evaluateAll(cards=>cards.map(card=>card.dataset.guideId)),ids=>ids.length===4),topFour);
-    assert.match(await main.locator('#quick-status').textContent(),/点击一套阵容/);
+    assert.match(await main.locator('#quick-status').textContent(),/点选后按这套阵容跟进/);
+    assert.equal(await main.locator('#data-tab').count(),0,'The US catalogue browser is removed from the companion UI');
+    assert.equal(await main.locator('#preview-details').evaluate(details=>details.open),false,'Video preview starts collapsed');
+    assert.match(await overlay.locator('#overlay-title').textContent(),/选一套阵容/);
     await main.screenshot({path:path.join(artifacts,'auto-four-comps.png')});
     await main.locator('#quick-list .quick-card').nth(1).click();
     await until(state,s=>s.guides.selectedId===topFour[1]);
+    assert.equal(await overlay.locator('#overlay-title').textContent(),REVIEWED_GUIDES.find(g=>g.id===topFour[1]).name);
+    assert.match(await main.locator('#advice-selected').textContent(),/已选/);
     await main.evaluate(()=>window.desktop.guideSettings({enabled:true,order:'top4',selectedId:null}));
     const ashe = REVIEWED_GUIDES.find(g => g.id === 'e8b7afe7f6f89da628eea8d25607e99f');
-    assert.equal(await overlay.locator('#overlay-title').textContent(), defaultGuide.name);
+    assert.match(await overlay.locator('#overlay-title').textContent(),/选一套阵容/);
     await main.evaluate(() => { document.getElementById('settings-dialog').showModal(); document.getElementById('guide-tab').click(); });
     assert.equal(await main.locator('.guide-card').count(), 10);
     assert.equal((await state()).guides.entries.length, 50);
@@ -206,6 +211,7 @@ async function until(read, condition, timeout = 10000) {
         return stream;
       };
     });
+    await restarted.evaluate(id=>window.desktop.guideSettings({enabled:true,order:'top4',selectedId:id}),ashe.id);
     await restarted.evaluate(()=>window.desktop.detectGame());
     const automatic=await until(async()=>({state:await restarted.evaluate(async()=>(await window.desktop.state()).value),calls:await app.evaluate(()=>global.__autoAiCalls)}),value=>value.state.capture==='active'&&['watching','running'].includes(value.state.live.phase)&&value.calls>0,20000).then(value=>value.state).catch(async error=>{
       const current=await restarted.evaluate(async()=>(await window.desktop.state()).value);
@@ -217,6 +223,9 @@ async function until(read, condition, timeout = 10000) {
     assert.equal(await app.evaluate(()=>global.__autoAiCalls),1,'Only the selected synthetic game frame was sent');
     await until(()=>restarted.evaluate(async()=>(await window.desktop.state()).value.live.observation),Boolean);
     assert.match(await restarted.locator('#advice-stage').textContent(),/本局 2-1/);
+    assert.match(await restarted.locator('#advice-next-title').textContent(),/先稳过渡/);
+    const restartedOverlay=await until(()=>Promise.resolve(app.windows().find(p=>p.url().endsWith('/overlay.html'))),Boolean);
+    assert.match(await restartedOverlay.locator('#overlay-description').textContent(),/先稳过渡/);
     await restarted.screenshot({path:path.join(artifacts,'auto-follow-dashboard.png')});
     report.autoFollow='Unique TFT source auto-captured; one explicit session consent; mock DeepSeek observation started without clicking follow';
     await fs.writeFile(path.join(artifacts, 'report.json'), JSON.stringify(report, null, 2)); console.log(JSON.stringify(report, null, 2));

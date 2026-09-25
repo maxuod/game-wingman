@@ -2,7 +2,7 @@
 
 ## 填写自己的 API Key
 
-打开软件“资料与设置 → AI 识别 → API Key 配置”。选择 DeepSeek、Gemini 或 MiniMax 国内，粘贴对应密钥并点击“加密保存密钥”。输入框保存后清空，软件重启后继续使用系统加密凭据；已保存的密钥不会回传页面。平台需自己选定，不按相似的 Key 前缀猜测。
+打开软件“设置 → AI 识别 → API Key 配置”。选择 DeepSeek、Gemini 或 MiniMax 国内，粘贴对应密钥并点击“加密保存密钥”。输入框保存后清空，软件重启后继续使用系统加密凭据；已保存的密钥不会回传页面。平台需自己选定，不按相似的 Key 前缀猜测。
 
 也可点击“保存空白模板”，填好本地文件后“导入密钥文件”。GitHub 中提供 [api-keys.example.json](../api-keys.example.json) 和 [.env.example](../.env.example) 空模板；复制为 `api-keys.json` 或 `.env`，只填自己使用的平台，其他字段留空。软件按 `DEEPSEEK_API_KEY`、`GEMINI_API_KEY`、`MINIMAX_API_KEY` 字段识别归属。普通用户无需修改源码或启动开发 CLI。
 
@@ -40,7 +40,7 @@ Gemini 3.8 Flash 两次文字请求返回 HTTP 503，失败耗时不列入速度
 
 ## 桌面使用
 
-1. 打开“资料与设置 → AI 识别”。本轮基准测试已锁定 DeepSeek / deepseek-flash；其他提供方凭据保留。
+1. 打开“设置 → AI 识别”。本轮基准测试已锁定 DeepSeek / deepseek-flash；其他提供方凭据保留。
 2. “导入密钥文件”支持本机 `.env` 或 JSON，字段为 `DEEPSEEK_API_KEY`、`GEMINI_API_KEY`、`MINIMAX_API_KEY`。仅主进程读取，可以一次导入三家。
 3. 启用“允许 AI 请求”并保存。“测试文字连接”只发送一次固定 `Reply with exactly OK.`，计入本轮预算。
 4. 选择窗口读取画面或导入图片。点击“识别这一帧”会暂停预览，并弹出原生确认框，列明提供方、模型、端点和画面时间。取消不发送。

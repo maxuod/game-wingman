@@ -99,6 +99,7 @@ async function until(read, condition, timeout = 10000) {
       return nativeImage.createFromBitmap(bytes, { width: 640, height: 360 }).toPNG().toString('base64');
     }, fixture);
     await fs.writeFile(fixture, Buffer.from(fixtureBytes, 'base64'));
+    await main.click('#preview-details summary');
     await main.click('#import-button');
     await main.waitForSelector('#frame-preview:not([hidden])');
     assert.equal((await readState()).frameCount, 1);
@@ -142,19 +143,12 @@ async function until(read, condition, timeout = 10000) {
       report.capture = 'Native synthetic window: captured twice, paused, resumed, source closure stopped stream';
     } else report.capture = `Skipped native capture: screen permission ${permission}; no permission change attempted`;
     await main.click('#settings-button');
-    if (process.env.GWM_LIVE_DATA === '1') {
-      await main.click('#sync-button');
-      await until(readState, state => state.catalogCount > 0, 60000);
-      await main.fill('#catalog-search', 'Lux');
-      await main.locator('.catalog-row').first().click();
-      assert.equal((await readState()).selectedEntry.name.includes('Lux'), true);
-      assert.match(await overlay.locator('#overlay-title').innerText(), /Lux/);
-      report.catalogue = `Live NA dictionary ${ (await readState()).catalogVersion }; searched and pinned`;
-    }
+    assert.equal(await main.locator('#data-tab').count(),0);
+    report.catalogue = 'Dictionary remains internal; no standalone catalogue browser';
     await main.screenshot({ path: artifact('app-settings.png') });
     await main.click('#overlay-tab');
     assert.equal(await main.locator('#overlay-panel').isVisible(), true);
-    assert.equal(await main.locator('#data-panel').isVisible(), false);
+    assert.equal(await main.locator('#data-panel').count(), 0);
     await main.screenshot({ path: artifact('app-overlay-settings.png') });
     await main.click('[data-close="settings-dialog"]');
     await main.evaluate(() => window.desktop.selectEntry(null));
