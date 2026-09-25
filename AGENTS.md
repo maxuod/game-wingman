@@ -10,6 +10,7 @@ Read `README.zh-CN.md`, `docs/windows-handoff.md` and `docs/api-providers.md` be
 - Keep credentials in the main/Node layer. Never expose keys in renderer IPC, commit `.env`, bundle keys or silently send screenshots.
 - Do not make live paid provider calls as part of tests. Use injected mock fetch. Live probes must be explicitly requested and configured.
 - No automatic provider fallback: switching providers changes data recipients and cost.
+- Data sources are not restricted to OP.GG. Follow docs/data-sources.md: maintain GitHub-visible source/author links, usage and transformations, version/timestamp/statistical scope, rights references and integration status. Update dataset provenance and THIRD_PARTY_NOTICES.md with every applicable source change; do not label candidates as active or combine incompatible samples.
 - Tactical explanations need reviewed, versioned sources. Never pass off a name dictionary, unverified model output or an old frame as a current guide.
 - Keep experimental-use and account-ban notices visible in documentation. Do not claim Riot approval or game compatibility from synthetic tests.
 - Preserve unrelated work. State local checks, CI checks, packaging, real game validation and publication separately.

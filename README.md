@@ -10,6 +10,10 @@ This public preview is for feedback and for developing reusable capture, recogni
 
 > **Experimental software and account risk:** This project is not endorsed by Riot Games. Contextual real-time advice may conflict with game policies, and use may result in account penalties, including bans. No account-safety, accuracy or performance guarantees are made. A prototype label does not exempt a tool from game rules. Read the [trial notice](docs/usage.md) before use.
 
+## Data sources and attribution
+
+Sources are not limited to OP.GG. The [source registry](docs/data-sources.md) records owners, links, fields used, versions, update scope and usage conditions for Riot, OP.GG, CommunityDragon and other sources. It distinguishes public-code integrations, local development, research and candidates. New sources must update this registry and the [third-party notices](THIRD_PARTY_NOTICES.md).
+
 ## What works today
 
 | Component | Status |

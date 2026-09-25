@@ -1,5 +1,7 @@
 # Third-party notices
 
+See the [data-source registry](docs/data-sources.md) for source owners, original links, actual usage, version scope, attribution and integration status. It distinguishes public mainline code from local-only development and candidates. Attribution is required when adding sources; listing a source does not grant reuse rights or imply endorsement.
+
 Game Wingman's own reuse license is not yet selected; `package.json` intentionally says `UNLICENSED`. Public source visibility does not change the licenses of dependencies or external content.
 
 - **Electron**, **TypeScript**, **Playwright**, **@electron/packager** and their dependencies retain their individual licenses. The exact dependency graph is recorded in `package-lock.json`; package distributions include Electron/Chromium license material supplied by their distributors.
