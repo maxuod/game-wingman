@@ -25,7 +25,7 @@ module.exports=async function({app,main,overlay,profile,artifacts,until,guide,co
         return new Response(JSON.stringify({choices:[{finish_reason:'stop',message:{content:JSON.stringify(global.__fakeFields)}}],usage:{prompt_tokens:1500,completion_tokens:200}}));
       }
       if(url==='https://op.gg/tft/meta-trends/comps'){
-        if(options.method==='POST'){global.__augmentCalls++;return new Response('0:{"a":"$@1"}\n1:'+JSON.stringify({silver:[{_key:'DA_Test',name:'测试海克斯',tier:'silver',imageUrl:'https://c-tft-api.op.gg/img/set/18/tft-augment/Pandora1.png',org:{isRound21:true}}],gold:[],prism:[]})+'\n',{headers:{'content-type':'text/x-component'}});}
+        if(options.method==='POST'){global.__augmentCalls++;return new Response('0:{"a":"$@1"}\n1:'+JSON.stringify({silver:[{_key:'DA_Test',name:'测试海克斯',tier:'silver',imageUrl:'https://c-tft-api.op.gg/img/set/18/tft-augment/Pandora1.png',org:{isRound21:true,isRound32:true}}],gold:[],prism:[]})+'\n',{headers:{'content-type':'text/x-component'}});}
         return new Response(comps+'<script src="https://c-tft-web.op.gg/_next/static/chunks/9558-0123456789abcdef.js"></script>');
       }
       if(url==='https://c-tft-web.op.gg/_next/static/chunks/9558-0123456789abcdef.js')return new Response('(0,v.createServerReference)("4040120aa22861b8b764977d2caa7fa8cc791fdf62",v.callServer,void 0,v.findSourceMapURL,"getAugment")');
@@ -36,11 +36,12 @@ module.exports=async function({app,main,overlay,profile,artifacts,until,guide,co
   await until(()=>main.locator('#equipment-build .augment-content').textContent(),t=>t.includes('测试海克斯'));
   assert.equal(await app.evaluate(()=>global.__augmentCalls),1);assert.equal(await app.evaluate(()=>global.__fakeAiCalls),0);
   assert.equal((await overlay.evaluate(id=>window.desktop.guideAugments(id),guide.id)).ok,false);
-  await main.evaluate(()=>document.getElementById('equipment-start').click());
   await until(()=>app.evaluate(()=>global.__consents),n=>n===1);assert.equal((await state()).live.phase,'off');assert.equal((await state()).budget.requests,0);
   await app.evaluate(()=>{global.__consent=1});await main.evaluate(()=>document.getElementById('equipment-start').click());
   const first=await until(state,s=>s.equipment.origin==='ai'&&s.equipment.recommendations[0]?.itemId==='DA_LastWhisper',15000);
   assert.equal(first.equipment.manual,null);assert.equal(first.equipment.recommendations.length,1);
+  await until(()=>main.locator('#advice-augment').textContent(),t=>t.includes('测试海克斯'));
+  assert.match(await main.locator('#advice-craft').textContent(),/最后的轻语/);
   await app.evaluate(()=>{global.__fakeFields.equipment.completed=['Last Whisper']});
   await until(state,s=>s.equipment.recommendations[0]?.itemId==='DA_RedBuff',20000);
   await until(()=>overlay.locator('#overlay-visual').getAttribute('hidden'),v=>v===null);

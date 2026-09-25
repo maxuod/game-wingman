@@ -265,7 +265,7 @@ function protectWindow(window: BrowserWindow) {
 }
 function createMainWindow() {
   mainWindow = new BrowserWindow({
-    width: 880, height: 650, minWidth: 720, minHeight: 580, title: 'Game Wingman',
+    width: 880, height: 720, minWidth: 720, minHeight: 580, title: 'Game Wingman',
     backgroundColor: '#F2F5F4', show: false, autoHideMenuBar: true, icon: asset('icon.png'),
     ...(process.platform === 'darwin' ? { titleBarStyle: 'hiddenInset' as const, trafficLightPosition: { x: 18, y: 19 } } : {}),
     webPreferences: { preload: path.join(__dirname, '../preload/index.js'), sandbox: true, contextIsolation: true, nodeIntegration: false, spellcheck: false, backgroundThrottling: false }

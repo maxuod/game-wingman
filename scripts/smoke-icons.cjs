@@ -7,6 +7,7 @@ module.exports=async({main,overlay,app,until,artifacts})=>{
   await until(()=>app.evaluate(()=>global.__iconRequests.some(u=>u.endsWith('/OfflineFixture.png'))),Boolean);
   assert.equal(await main.locator('#icon-fallback-test img').count(),0);assert.equal(await main.locator('#icon-fallback-test').getAttribute('aria-label'),'离线名称');
   assert.equal(await main.locator('#icon-fallback-test .icon-fallback').isVisible(),true);
+  await main.keyboard.press('Tab');await main.locator('#icon-fallback-test').focus();
   assert.equal(await main.evaluate(()=>getComputedStyle(document.getElementById('icon-fallback-test'),'::after').content),'"离线名称"');
   await main.evaluate(()=>document.getElementById('icon-fallback-test').remove());await app.evaluate(()=>{global.__failIcons=false});
   await main.evaluate(()=>document.getElementById('equipment-status').scrollIntoView());
