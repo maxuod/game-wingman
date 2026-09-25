@@ -6,6 +6,9 @@ artifacts/
 .env
 .env.*
 !.env.example
+api-keys.json
+api-keys.*.json
+!api-keys.example.json
 *.log
 captures/
 user-data/

@@ -6,29 +6,73 @@
   <title>Game Wingman</title><link rel="stylesheet" href="styles.css">
 </head>
 <body class="app">
-  <header class="titlebar"><span class="wordmark"><span class="brand-mark" aria-hidden="true"></span>Game Wingman</span><span class="region">TFT · 美服</span><button id="settings-button" class="text-button">资料与设置</button></header>
+  <header class="titlebar"><span class="wordmark"><img class="brand-mark" src="brand/mark-ink.svg" alt="" width="30" height="18">Game Wingman</span><span class="region">TFT · 美服</span><button id="settings-button" class="text-button">资料与设置</button></header>
   <main class="workspace">
     <section class="controls" aria-label="画面读取控制">
       <div class="source-label"><span id="state-dot" class="state-dot"></span><div><h1 id="source-name">选择一个游戏窗口</h1><p id="source-detail">开始前不会读取屏幕</p></div></div>
       <div class="actions"><button id="choose-source">选择窗口</button><button id="capture-button" class="primary" disabled>开始读取</button><button id="overlay-button" aria-pressed="false">显示浮窗</button></div>
     </section>
     <div id="notice" class="notice" role="alert" hidden><span id="notice-text"></span><button id="permission-button" class="text-button" hidden>打开系统设置</button><button id="dismiss-notice" class="icon-button" aria-label="关闭提示">×</button></div>
-    <section class="preview" aria-label="所选窗口画面预览">
+    <section class="preview" aria-label="所选窗口视频预览">
       <div id="empty-preview" class="empty-preview"><svg width="48" height="40" viewBox="0 0 48 40" fill="none" aria-hidden="true"><rect x="4.5" y="3.5" width="39" height="27" rx="4" stroke="currentColor" stroke-width="1.5"/><path d="M18 37h12M24 31v6M17 17h14M24 10v14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><p>等待画面</p><span>选择窗口，或导入一张截图</span></div>
       <img id="frame-preview" alt="当前选择的游戏画面" hidden>
+      <video id="capture-video" aria-label="当前选择的游戏视频流" muted playsinline hidden></video>
       <span id="preview-label" class="preview-label" hidden>预览</span>
     </section>
-    <div class="preview-meta"><span id="capture-detail" role="status">画面仅留在本机内存</span><button id="import-button" class="text-button">导入截图</button></div>
+    <div class="preview-meta"><span id="capture-detail" role="status">画面仅留在本机内存</span><button id="analyze-button" class="text-button" disabled>识别这一帧</button><button id="guide-shortcut" class="text-button">阵容攻略</button><button id="import-button" class="text-button">导入截图</button></div>
+    <section id="ai-result" class="ai-result" hidden aria-label="AI 识别状态"><div><p id="ai-status" role="status"></p><p id="ai-summary" class="fine"></p></div><button id="ai-cancel" class="text-button" hidden>取消请求</button><button id="ai-review" class="text-button" hidden>核对字段</button></section>
+    <section id="live-result" class="ai-result live-result" hidden aria-label="持续跟进状态"><div><p id="live-status" role="status"></p><p id="live-summary" class="fine"></p></div><button id="live-details" class="text-button">变化记录</button><button id="live-stop" class="text-button" hidden>停止跟进</button></section>
   </main>
-  <footer class="app-footer"><span>试用版 0.1 <span class="separator">/</span> 识别与攻略尚未接入</span><button id="help-button" class="text-button">使用说明 · 风险提示</button></footer>
-  <video id="capture-video" muted playsinline hidden></video>
+  <footer class="app-footer"><span>试用版 0.1 <span class="separator">/</span> 自动查找游戏 · 阵容统计参考</span><button id="help-button" class="text-button">使用说明 · 风险提示</button></footer>
 
   <dialog id="source-dialog" aria-labelledby="source-title"><div class="dialog-heading"><h2 id="source-title">选择游戏窗口</h2><button class="icon-button" data-close="source-dialog" aria-label="关闭窗口选择">×</button></div><p class="muted dialog-intro">只读取你选中的窗口。</p><div id="source-list" class="source-list" role="status"></div><div class="dialog-footer"><button id="refresh-sources" class="text-button">刷新列表</button><button class="text-button" data-close="source-dialog">取消</button></div></dialog>
   <dialog id="settings-dialog" class="settings-dialog" aria-labelledby="settings-title">
     <div class="dialog-heading"><h2 id="settings-title">资料与设置</h2><button class="icon-button" data-close="settings-dialog" aria-label="关闭资料与设置">×</button></div>
-    <div class="settings-tabs" role="tablist" aria-label="设置分类"><button id="data-tab" role="tab" aria-selected="true" aria-controls="data-panel">美服资料</button><button id="overlay-tab" role="tab" aria-selected="false" aria-controls="overlay-panel" tabindex="-1">浮窗设置</button></div>
-    <section id="data-panel" role="tabpanel" aria-labelledby="data-tab" class="settings-section"><div class="section-heading"><h3>Set 18 名称字典</h3><button id="sync-button">同步资料</button></div><p id="catalog-status" class="muted">尚未同步 · Riot Data Dragon / en_US</p><p class="fine">英雄与羁绊资料，不含战术攻略。资源版本不等于 TFT 补丁，热修覆盖未确认。</p><label for="catalog-search" class="visually-hidden">搜索英雄或羁绊英文名称</label><input id="catalog-search" type="search" placeholder="搜索英雄或羁绊英文名…" maxlength="120" disabled><div id="catalog-results" class="catalog-results"></div><div id="pinned-entry" class="pinned-entry" hidden><span id="pinned-name"></span><button id="clear-entry" class="text-button">取消固定</button></div><p id="sync-feedback" class="fine" role="status"></p></section>
-    <section id="overlay-panel" role="tabpanel" aria-labelledby="overlay-tab" class="settings-section overlay-settings" hidden><label class="setting-row" for="opacity"><span>不透明度</span><input id="opacity" type="range" min="60" max="100" value="100"><output id="opacity-value" for="opacity">100%</output></label><div class="setting-row"><span>点击穿透</span><button id="interaction-button" disabled>开启</button></div><p id="shortcut-help" class="fine"></p><button id="reset-overlay" class="text-button">恢复浮窗位置与操作</button></section>
+    <div class="settings-tabs" role="tablist" aria-label="设置分类"><button id="guide-tab" role="tab" aria-selected="false" aria-controls="guide-panel" tabindex="-1">阵容攻略</button><button id="equipment-tab" role="tab" aria-selected="false" aria-controls="equipment-panel" tabindex="-1">装备合成</button><button id="data-tab" role="tab" aria-selected="true" aria-controls="data-panel">美服资料</button><button id="overlay-tab" role="tab" aria-selected="false" aria-controls="overlay-panel" tabindex="-1">浮窗设置</button><button id="ai-tab" role="tab" aria-selected="false" aria-controls="ai-panel" tabindex="-1">AI 识别</button></div>
+    <section id="guide-panel" role="tabpanel" aria-labelledby="guide-tab" class="settings-section" hidden><div class="section-heading"><h3>OP.GG 阵容参考</h3><button id="guide-refresh">刷新统计</button></div><p id="guide-scope" class="fine"></p><label class="ai-enable"><input id="guide-enabled" type="checkbox" checked>在浮窗显示阵容目标</label><label class="setting-row">排序<select id="guide-order"><option value="top4">前四率优先（默认）</option><option value="win">吃鸡率优先</option></select></label><button id="guide-auto" class="text-button">恢复自动排序</button><p id="guide-feedback" class="fine" role="status"></p><details class="update-details"><summary>自动更新与排名变化</summary><p id="guide-update-status" class="fine"></p><p id="guide-change-summary" class="fine"></p><p class="fine">排名超过 6 小时或检测到新补丁时刷新；更新失败保留缓存，1 小时后重试。</p><button id="official-source" class="text-button">查看官方补丁</button></details><label class="visually-hidden" for="guide-search">搜索阵容、英雄或装备</label><input id="guide-search" type="search" placeholder="搜索阵容、英雄或装备…" maxlength="120"><div class="guide-pagination"><p id="guide-count" class="fine"></p><button id="guide-prev" class="text-button">上一页</button><button id="guide-next" class="text-button">下一页</button></div><div id="guide-results"></div></section><section id="data-panel" role="tabpanel" aria-labelledby="data-tab" class="settings-section"><div class="section-heading"><h3>Set 18 名称字典</h3><button id="sync-button">同步资料</button></div><p id="catalog-status" class="muted">尚未同步 · Riot Data Dragon / en_US</p><p class="fine">英雄与羁绊资料，不含战术攻略。资源版本不等于 TFT 补丁，热修覆盖未确认。</p><label for="catalog-search" class="visually-hidden">搜索英雄或羁绊英文名称</label><input id="catalog-search" type="search" placeholder="搜索英雄或羁绊英文名…" maxlength="120" disabled><div id="catalog-results" class="catalog-results"></div><div id="pinned-entry" class="pinned-entry" hidden><span id="pinned-name"></span><button id="clear-entry" class="text-button">取消固定</button></div><p id="sync-feedback" class="fine" role="status"></p></section>
+    <section id="equipment-panel" role="tabpanel" aria-labelledby="equipment-tab" class="settings-section" hidden>
+      <div class="section-heading"><h3>当前装备怎么合</h3><button id="equipment-source" class="text-button">查看配方来源</button></div>
+      <p id="equipment-version" class="fine"></p><p id="equipment-update-status" class="fine"></p>
+      <label class="setting-row">目标阵容<select id="equipment-target"></select></label>
+      <div class="guide-actions"><button id="equipment-start" disabled>开启装备自动识别</button><button id="equipment-stop" class="text-button" hidden>停止自动识别</button></div><p id="equipment-tracking" class="fine"></p>
+      <p id="equipment-status" class="fine" role="status"></p><div id="equipment-observed" class="fine"></div>
+      <button id="equipment-adopt" class="text-button" hidden>固定此清单，转为手动</button>
+      <details id="equipment-editor"><summary>识别不清？手动纠正装备</summary><p class="fine">只填写未合成的散件；已穿在棋子身上的成装也计入“已有成装”。手动保存后会覆盖后续自动结果，点击“恢复自动识别”可取消覆盖。</p>
+        <div id="component-counts" class="component-grid"></div>
+        <label class="setting-row">已有成装<select id="completed-item"></select></label><button id="completed-add" class="text-button">加入已有成装</button><div id="completed-items" class="item-chips"></div>
+        <div class="guide-actions"><button id="equipment-save">按清单计算</button><button id="equipment-auto" class="text-button">恢复自动识别</button></div>
+      </details>
+      <h3 class="equipment-heading">现在优先合什么</h3><ol id="craft-plan" class="craft-list"></ol><p class="fine">按目标配装及核心顺序补缺装；已有成装按总数量扣除，穿戴者未区分。不评估强化符文、对手或当前战斗强度。</p>
+      <details><summary>其他可合成装备与缺少的散件</summary><p class="fine">备选可能与优先方案共用散件，请择一合成。</p><ul id="craft-alternatives" class="craft-list"></ul></details>
+      <h3 class="equipment-heading">阵容配装、站位与海克斯</h3><p id="equipment-build-title" class="fine"></p><p class="fine">以下为目标配装参考；无需识别清单，不能据此认定材料已齐。</p><div id="equipment-build"></div>
+      <h3 class="equipment-heading">装备合成表</h3><input id="item-search" type="search" placeholder="搜索成装或散件，中英文均可…" maxlength="120">
+      <label class="setting-row">范围<select id="item-category"><option value="recipes">全部合成配方</option><option value="all">全部装备</option><option value="core">普通成装</option><option value="emblem">转职</option><option value="artifact">神器</option><option value="radiant">光明装备</option></select></label>
+      <p id="item-count" class="fine"></p><div id="item-recipes" class="recipe-grid"></div>
+    </section>
+    <section id="overlay-panel" role="tabpanel" aria-labelledby="overlay-tab" class="settings-section overlay-settings" hidden><label class="ai-enable"><input id="auto-game" type="checkbox" checked>自动查找游戏窗口并预览</label><p id="auto-game-status" class="fine"></p><label class="setting-row" for="opacity"><span>不透明度</span><input id="opacity" type="range" min="60" max="100" value="100"><output id="opacity-value" for="opacity">100%</output></label><div class="setting-row"><span>点击穿透</span><button id="interaction-button" disabled>开启</button></div><p id="shortcut-help" class="fine"></p><button id="reset-overlay" class="text-button">恢复浮窗位置与操作</button></section>
+    <section id="ai-panel" role="tabpanel" aria-labelledby="ai-tab" class="settings-section" hidden>
+      <section class="key-settings" aria-labelledby="key-title"><h3 id="key-title">API Key 配置</h3>
+        <p class="fine">选择密钥所属平台并粘贴，或从本地 .env / JSON 文件一次导入多家。</p>
+        <label class="setting-row" for="ai-key-provider"><span>密钥平台</span><select id="ai-key-provider"><option value="deepseek">DeepSeek</option><option value="gemini">Gemini</option><option value="minimax">MiniMax（国内）</option></select></label>
+        <label class="setting-row" for="ai-key"><span>API Key</span><input id="ai-key" type="password" maxlength="4096" autocomplete="new-password" spellcheck="false" autocapitalize="off" placeholder="粘贴所选平台的 API Key" aria-describedby="ai-key-status"></label>
+        <p id="ai-key-status" class="fine" role="status"></p>
+        <div class="ai-buttons"><button id="ai-key-save">加密保存密钥</button><button id="ai-import" class="text-button">导入密钥文件</button><button id="ai-template" class="text-button">保存空白模板</button><button id="ai-remove" class="text-button">移除所选密钥</button></div>
+        <p id="ai-key-feedback" class="fine" role="status"></p><p class="fine">保存后输入框清空，重启仍可使用。保存不会测试或调用模型；本轮识别固定使用 DeepSeek，其他平台密钥仅保存。</p>
+      </section>
+      <p class="fine">手动识别每次确认后发送一帧。也可单独开启下方的持续跟进测试，可能产生 API 费用。</p>
+      <label class="setting-row" for="ai-provider"><span>提供方</span><select id="ai-provider" disabled><option value="deepseek">DeepSeek</option><option value="minimax">MiniMax</option><option value="gemini">Gemini</option></select></label>
+      <label class="setting-row" for="ai-model"><span>模型</span><input id="ai-model" readonly maxlength="120" autocomplete="off"></label>
+      <label id="ai-region-row" class="setting-row" for="ai-region"><span>MiniMax 服务地区</span><select id="ai-region"><option value="cn">国内</option><option value="global">国际</option></select></label>
+      <p id="ai-endpoint" class="fine endpoint"></p><p id="ai-credentials" class="fine"></p>
+      <label class="ai-enable"><input id="ai-enabled" type="checkbox">允许 AI 请求（自动发送需另行开启）</label>
+      <div class="ai-buttons"><button id="ai-save">保存请求设置</button><button id="ai-probe">测试 DeepSeek 连接（计费）</button></div>
+      <p id="ai-feedback" class="fine" role="status"></p>
+      <p class="fine">密钥仅在本机加密保存，不回显已保存的密钥。填写模板后请保存在本机，不上传 GitHub。</p>
+      <section class="live-settings"><div class="section-heading"><h3>DeepSeek · 首次对局测试</h3><button id="live-start" disabled>开始本次跟进</button></div><p class="fine">跟进阶段、金币、生命和等级变化。变化时最短每 5 秒识别一次，变化较小时每 15 秒复查；总预算 ¥10，最多 60 分钟 / 720 次。暂停或切换窗口即停止。</p><p id="test-budget" class="fine" role="status"></p><p class="fine">费用按高峰价格保守核算；超时或缺失用量会保留预留额。暂停和重启不会重置预算。</p><p id="live-feedback" class="fine" role="status"></p><ol id="live-history" class="live-history" aria-label="AI 识别变化记录"></ol></section>
+      <section id="ai-fields" hidden><h3>核对这一帧</h3><p class="fine">模型可能看错。空值表示未知，名称未匹配字典时保留原文。修改后点击确认。</p><div class="observation-fields">
+        <label>阶段<input id="field-stage" placeholder="未知，如 3-2" maxlength="4"></label><label>金币<input id="field-gold" type="number" min="0" max="999" placeholder="未知"></label><label>生命<input id="field-hp" type="number" min="0" max="999" placeholder="未知"></label><label>等级<input id="field-level" type="number" min="1" max="11" placeholder="未知"></label>
+      </div><label class="entities-label">可见实体（英文名称，逗号分隔）<input id="field-entities" maxlength="3600"></label><p id="ai-entity-matches" class="fine"></p><button id="ai-confirm">确认这些字段</button></section>
+    </section>
   </dialog>
   <script type="module" src="main.js"></script>
 </body></html>

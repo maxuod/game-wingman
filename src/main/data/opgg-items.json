@@ -1,0 +1,1269 @@
+{
+  "set": 18,
+  "patch": "18.3",
+  "checkedAt": "2026-09-24T23:35:08.574Z",
+  "sourceUrl": "https://op.gg/tft/game-guide/items",
+  "items": [
+    {
+      "id": "DA_AdaptiveHelm",
+      "name": "适应性头盔",
+      "englishName": "Adaptive Helm",
+      "category": "core",
+      "recipe": [
+        "DA_Component_TearOfTheGoddess",
+        "DA_Component_NegatronCloak"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_AdaptiveHelm.png"
+    },
+    {
+      "id": "DA_Artifact_AegisOfDawn",
+      "name": "黎明圣盾",
+      "englishName": "Aegis of Dawn",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_AegisOfDawn.png"
+    },
+    {
+      "id": "DA_Artifact_AegisOfDusk",
+      "name": "黄昏圣盾",
+      "englishName": "Aegis of Dusk",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_AegisOfDusk.png"
+    },
+    {
+      "id": "DA_JeweledGauntlet",
+      "name": "珠光护手",
+      "englishName": "Jeweled Gauntlet",
+      "category": "core",
+      "recipe": [
+        "DA_Component_SparringGloves",
+        "DA_Component_NeedlesslyLargeRod"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_JeweledGauntlet.png"
+    },
+    {
+      "id": "DA_Component_BFSword",
+      "name": "暴风大剑",
+      "englishName": "B.F. Sword",
+      "category": "component",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Component_BFSword.png"
+    },
+    {
+      "id": "DA_Artifact_BlightingJewel",
+      "name": "枯萎珠宝",
+      "englishName": "Blighting Jewel",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_BlightingJewel.png"
+    },
+    {
+      "id": "DA_Bloodthirster",
+      "name": "饮血剑",
+      "englishName": "Bloodthirster",
+      "category": "core",
+      "recipe": [
+        "DA_Component_BFSword",
+        "DA_Component_NegatronCloak"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Bloodthirster.png"
+    },
+    {
+      "id": "DA_BlueBuff",
+      "name": "蓝霸符",
+      "englishName": "Blue Buff",
+      "category": "core",
+      "recipe": [
+        "DA_Component_TearOfTheGoddess",
+        "DA_Component_TearOfTheGoddess"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_BlueBuff.png"
+    },
+    {
+      "id": "DA_BrambleVest",
+      "name": "棘刺背心",
+      "englishName": "Bramble Vest",
+      "category": "core",
+      "recipe": [
+        "DA_Component_ChainVest",
+        "DA_Component_ChainVest"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_BrambleVest.png"
+    },
+    {
+      "id": "DA_Component_ChainVest",
+      "name": "锁子甲",
+      "englishName": "Chain Vest",
+      "category": "component",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Component_ChainVest.png"
+    },
+    {
+      "id": "DA_Crownguard",
+      "name": "冕卫",
+      "englishName": "Crownguard",
+      "category": "core",
+      "recipe": [
+        "DA_Component_NeedlesslyLargeRod",
+        "DA_Component_ChainVest"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Crownguard.png"
+    },
+    {
+      "id": "DA_CrownguardRadiant",
+      "name": "光明版冕卫",
+      "englishName": "Radiant Crownguard",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_CrownguardRadiant.png"
+    },
+    {
+      "id": "DA_Artifact_Dawncore",
+      "name": "黎明核心",
+      "englishName": "Dawncore",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_Dawncore.png"
+    },
+    {
+      "id": "DA_DragonsClaw",
+      "name": "巨龙之爪",
+      "englishName": "Dragon's Claw",
+      "category": "core",
+      "recipe": [
+        "DA_Component_NegatronCloak",
+        "DA_Component_NegatronCloak"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_DragonsClaw.png"
+    },
+    {
+      "id": "DA_Artifact_EternalPact",
+      "name": "永恒契约",
+      "englishName": "Eternal Pact",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_EternalPact.png"
+    },
+    {
+      "id": "DA_Evenshroud",
+      "name": "薄暮法袍",
+      "englishName": "Evenshroud",
+      "category": "core",
+      "recipe": [
+        "DA_Component_NegatronCloak",
+        "DA_Component_GiantsBelt"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Evenshroud.png"
+    },
+    {
+      "id": "DA_EvenshroudRadiant",
+      "name": "光明版薄暮法袍",
+      "englishName": "Radiant Evenshroud",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_EvenshroudRadiant.png"
+    },
+    {
+      "id": "DA_ProtectorsVow",
+      "name": "圣盾使的誓约",
+      "englishName": "Protector's Vow",
+      "category": "core",
+      "recipe": [
+        "DA_Component_ChainVest",
+        "DA_Component_TearOfTheGoddess"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_ProtectorsVow.png"
+    },
+    {
+      "id": "DA_ProtectorsVowRadiant",
+      "name": "光明版圣盾使的誓约",
+      "englishName": "Radiant Protector's Vow",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_ProtectorsVowRadiant.png"
+    },
+    {
+      "id": "DA_Artifact_Fishbones",
+      "name": "鱼骨头",
+      "englishName": "Fishbones",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_Fishbones.png"
+    },
+    {
+      "id": "DA_Artifact_NavoriFlickerblade",
+      "name": "烁刃",
+      "englishName": "Flickerblades",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_NavoriFlickerblade.png"
+    },
+    {
+      "id": "DA_Artifact_ForbiddenIdol",
+      "name": "禁忌雕像",
+      "englishName": "Forbidden Idol",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_ForbiddenIdol.png"
+    },
+    {
+      "id": "DA_TacticiansCrown",
+      "name": "金铲铲冠冕",
+      "englishName": "Tacticians Crown",
+      "category": "core",
+      "recipe": [
+        "DA_Component_Spatula",
+        "DA_Component_Spatula"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_TacticiansCrown.png"
+    },
+    {
+      "id": "DA_Component_FryingPan",
+      "name": "金锅锅",
+      "englishName": "Frying Pan",
+      "category": "component",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Component_FryingPan.png"
+    },
+    {
+      "id": "DA_Artifact_GamblersBlade",
+      "name": "投机者之刃",
+      "englishName": "Gambler's Blade",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_GamblersBlade.png"
+    },
+    {
+      "id": "DA_Component_GiantsBelt",
+      "name": "巨人腰带",
+      "englishName": "Giant's Belt",
+      "category": "component",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Component_GiantsBelt.png"
+    },
+    {
+      "id": "DA_GiantSlayer",
+      "name": "巨人杀手",
+      "englishName": "Giant Slayer",
+      "category": "core",
+      "recipe": [
+        "DA_Component_RecurveBow",
+        "DA_Component_BFSword"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_GiantSlayer.png"
+    },
+    {
+      "id": "DA_StrikersFlail",
+      "name": "强袭者的链枷",
+      "englishName": "Striker's Flail",
+      "category": "core",
+      "recipe": [
+        "DA_Component_GiantsBelt",
+        "DA_Component_SparringGloves"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_StrikersFlail.png"
+    },
+    {
+      "id": "DA_EdgeOfNight",
+      "name": "夜之锋刃",
+      "englishName": "Edge of Night",
+      "category": "core",
+      "recipe": [
+        "DA_Component_BFSword",
+        "DA_Component_ChainVest"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_EdgeOfNight.png"
+    },
+    {
+      "id": "DA_GuinsoosRageblade",
+      "name": "鬼索的狂暴之刃",
+      "englishName": "Guinsoo's Rageblade",
+      "category": "core",
+      "recipe": [
+        "DA_Component_RecurveBow",
+        "DA_Component_NeedlesslyLargeRod"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_GuinsoosRageblade.png"
+    },
+    {
+      "id": "DA_HandOfJustice",
+      "name": "正义之手",
+      "englishName": "Hand Of Justice",
+      "category": "core",
+      "recipe": [
+        "DA_Component_TearOfTheGoddess",
+        "DA_Component_SparringGloves"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_HandOfJustice.png"
+    },
+    {
+      "id": "DA_Artifact_HellfireHatchet",
+      "name": "恶火小斧",
+      "englishName": "Hellfire Hatchet",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_HellfireHatchet.png"
+    },
+    {
+      "id": "DA_HextechGunblade",
+      "name": "海克斯科技枪刃",
+      "englishName": "Hextech Gunblade",
+      "category": "core",
+      "recipe": [
+        "DA_Component_BFSword",
+        "DA_Component_NeedlesslyLargeRod"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_HextechGunblade.png"
+    },
+    {
+      "id": "DA_Artifact_HorizonFocus",
+      "name": "视界专注",
+      "englishName": "Horizon Focus",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_HorizonFocus.png"
+    },
+    {
+      "id": "DA_Artifact_Hullcrusher",
+      "name": "碎舰者",
+      "englishName": "Hullcrusher",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_Hullcrusher.png"
+    },
+    {
+      "id": "DA_Artifact_TheIndomitable",
+      "name": "顽强不屈",
+      "englishName": "The Indomitable",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_TheIndomitable.png"
+    },
+    {
+      "id": "DA_InfinityEdge",
+      "name": "无尽之刃",
+      "englishName": "Infinity Edge",
+      "category": "core",
+      "recipe": [
+        "DA_Component_BFSword",
+        "DA_Component_SparringGloves"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_InfinityEdge.png"
+    },
+    {
+      "id": "DA_IonicSpark",
+      "name": "离子火花",
+      "englishName": "Ionic Spark",
+      "category": "core",
+      "recipe": [
+        "DA_Component_NeedlesslyLargeRod",
+        "DA_Component_NegatronCloak"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_IonicSpark.png"
+    },
+    {
+      "id": "DA_GargoyleStoneplate",
+      "name": "石像鬼石板甲",
+      "englishName": "Gargoyle Stoneplate",
+      "category": "core",
+      "recipe": [
+        "DA_Component_ChainVest",
+        "DA_Component_NegatronCloak"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_GargoyleStoneplate.png"
+    },
+    {
+      "id": "DA_AdaptiveHelm_Radiant",
+      "name": "光明版适应性头盔",
+      "englishName": "Radiant Adaptive Helm",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_AdaptiveHelm_Radiant.png"
+    },
+    {
+      "id": "DA_LastWhisper",
+      "name": "最后的轻语",
+      "englishName": "Last Whisper",
+      "category": "core",
+      "recipe": [
+        "DA_Component_RecurveBow",
+        "DA_Component_SparringGloves"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_LastWhisper.png"
+    },
+    {
+      "id": "DA_Artifact_LichBane",
+      "name": "巫妖之祸",
+      "englishName": "Lich Bane",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_LichBane.png"
+    },
+    {
+      "id": "DA_Artifact_LightshieldCrest",
+      "name": "光盾徽章",
+      "englishName": "Lightshield Crest",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_LightshieldCrest.png"
+    },
+    {
+      "id": "DA_Deathblade",
+      "name": "死亡之刃",
+      "englishName": "Deathblade",
+      "category": "core",
+      "recipe": [
+        "DA_Component_BFSword",
+        "DA_Component_BFSword"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Deathblade.png"
+    },
+    {
+      "id": "DA_ArchangelsStaff",
+      "name": "大天使之杖",
+      "englishName": "Archangel's Staff",
+      "category": "core",
+      "recipe": [
+        "DA_Component_NeedlesslyLargeRod",
+        "DA_Component_TearOfTheGoddess"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_ArchangelsStaff.png"
+    },
+    {
+      "id": "DA_Artifact_LudensTempest",
+      "name": "卢登的激荡",
+      "englishName": "Luden's Tempest",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_LudensTempest.png"
+    },
+    {
+      "id": "DA_Artifact_Mittens",
+      "name": "连指手套",
+      "englishName": "Mittens",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_Mittens.png"
+    },
+    {
+      "id": "DA_Artifact_MogulsMail",
+      "name": "大亨之铠",
+      "englishName": "Mogul'sMail",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_MogulsMail.png"
+    },
+    {
+      "id": "DA_Morellonomicon",
+      "name": "莫雷洛秘典",
+      "englishName": "Morellonomicon",
+      "category": "core",
+      "recipe": [
+        "DA_Component_GiantsBelt",
+        "DA_Component_NeedlesslyLargeRod"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Morellonomicon.png"
+    },
+    {
+      "id": "DA_NashorsTooth",
+      "name": "纳什之牙",
+      "englishName": "Nashor's Tooth",
+      "category": "core",
+      "recipe": [
+        "DA_Component_RecurveBow",
+        "DA_Component_GiantsBelt"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_NashorsTooth.png"
+    },
+    {
+      "id": "DA_NashorsToothRadiant",
+      "name": "光明版纳什之牙",
+      "englishName": "Radiant Nashor's Tooth",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_NashorsToothRadiant.png"
+    },
+    {
+      "id": "DA_Component_NeedlesslyLargeRod",
+      "name": "无用大棒",
+      "englishName": "Needlessly Large Rod",
+      "category": "component",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Component_NeedlesslyLargeRod.png"
+    },
+    {
+      "id": "DA_Component_NegatronCloak",
+      "name": "负极斗篷",
+      "englishName": "Negatron Cloak",
+      "category": "component",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Component_NegatronCloak.png"
+    },
+    {
+      "id": "DA_Artifact_DeathsDefiance",
+      "name": "死亡之蔑",
+      "englishName": "Death's Defiance",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_DeathsDefiance.png"
+    },
+    {
+      "id": "DA_Artifact_Manazane",
+      "name": "魔蕴",
+      "englishName": "Manazane",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_Manazane.png"
+    },
+    {
+      "id": "DA_Artifact_GoldCollector",
+      "name": "金币收集者",
+      "englishName": "Gold Collector",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_GoldCollector.png"
+    },
+    {
+      "id": "DA_Artifact_InfinityForce",
+      "name": "三相之力",
+      "englishName": "Infinity Force",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_InfinityForce.png"
+    },
+    {
+      "id": "DA_Artifact_ZhonyasParadox",
+      "name": "中娅悖论",
+      "englishName": "Zhonya's Paradox",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_ZhonyasParadox.png"
+    },
+    {
+      "id": "DA_Quicksilver",
+      "name": "水银",
+      "englishName": "Quicksilver",
+      "category": "core",
+      "recipe": [
+        "DA_Component_NegatronCloak",
+        "DA_Component_SparringGloves"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Quicksilver.png"
+    },
+    {
+      "id": "DA_RabadonsDeathcap",
+      "name": "灭世者的死亡之帽",
+      "englishName": "Rabadon's Deathcap",
+      "category": "core",
+      "recipe": [
+        "DA_Component_NeedlesslyLargeRod",
+        "DA_Component_NeedlesslyLargeRod"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_RabadonsDeathcap.png"
+    },
+    {
+      "id": "DA_ArchangelsStaffRadiant",
+      "name": "光明版大天使之杖",
+      "englishName": "Radiant Archangel's Staff",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_ArchangelsStaffRadiant.png"
+    },
+    {
+      "id": "DA_BloodthirsterRadiant",
+      "name": "光明版饮血剑",
+      "englishName": "Radiant Bloodthirster",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_BloodthirsterRadiant.png"
+    },
+    {
+      "id": "DA_BlueBuffRadiant",
+      "name": "光明版蓝霸符",
+      "englishName": "Radiant Blue Buff",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_BlueBuffRadiant.png"
+    },
+    {
+      "id": "DA_BrambleVestRadiant",
+      "name": "光明版棘刺背心",
+      "englishName": "Radiant Bramble Vest",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_BrambleVestRadiant.png"
+    },
+    {
+      "id": "DA_DeathbladeRadiant",
+      "name": "光明版死亡之刃",
+      "englishName": "Radiant Deathblade",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_DeathbladeRadiant.png"
+    },
+    {
+      "id": "DA_DragonsClawRadiant",
+      "name": "光明版巨龙之爪",
+      "englishName": "Radiant Dragon's Claw",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_DragonsClawRadiant.png"
+    },
+    {
+      "id": "DA_EdgeOfNightRadiant",
+      "name": "光明版夜之锋刃",
+      "englishName": "Radiant Edge of Night",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_EdgeOfNightRadiant.png"
+    },
+    {
+      "id": "DA_GargoyleStoneplate_Radiant",
+      "name": "光明版石像鬼石板甲",
+      "englishName": "Radiant Gargoyle Stoneplate",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_GargoyleStoneplate_Radiant.png"
+    },
+    {
+      "id": "DA_GiantSlayer_Radiant",
+      "name": "光明版巨人杀手",
+      "englishName": "Radiant Giant Slayer",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_GiantSlayer_Radiant.png"
+    },
+    {
+      "id": "DA_GuinsoosRagebladeRadiant",
+      "name": "光明版鬼索的狂暴之刃",
+      "englishName": "Radiant Guinsoo's Rageblade",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_GuinsoosRagebladeRadiant.png"
+    },
+    {
+      "id": "DA_HandOfJusticeRadiant",
+      "name": "光明版正义之手",
+      "englishName": "Radiant Hand of Justice",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_HandOfJusticeRadiant.png"
+    },
+    {
+      "id": "DA_HextechGunbladeRadiant",
+      "name": "光明版海克斯科技枪刃",
+      "englishName": "Radiant Hextech Gunblade",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_HextechGunbladeRadiant.png"
+    },
+    {
+      "id": "DA_InfinityEdgeRadiant",
+      "name": "光明版无尽之刃",
+      "englishName": "Radiant Infinity Edge",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_InfinityEdgeRadiant.png"
+    },
+    {
+      "id": "DA_IonicSparkRadiant",
+      "name": "光明版离子火花",
+      "englishName": "Radiant Ionic Spark",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_IonicSparkRadiant.png"
+    },
+    {
+      "id": "DA_JeweledGauntletRadiant",
+      "name": "光明版珠光护手",
+      "englishName": "Radiant Jeweled Gauntlet",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_JeweledGauntletRadiant.png"
+    },
+    {
+      "id": "DA_LastWhisperRadiant",
+      "name": "光明版最后的轻语",
+      "englishName": "Radiant Last Whisper",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_LastWhisperRadiant.png"
+    },
+    {
+      "id": "DA_MorellonomiconRadiant",
+      "name": "光明版莫雷洛秘典",
+      "englishName": "Radiant Morellonomicon",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_MorellonomiconRadiant.png"
+    },
+    {
+      "id": "DA_QuicksilverRadiant",
+      "name": "光明版水银",
+      "englishName": "Radiant Quicksilver",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_QuicksilverRadiant.png"
+    },
+    {
+      "id": "DA_RabadonsDeathcap_Radiant",
+      "name": "光明版灭世者的死亡之帽",
+      "englishName": "Radiant Rabadon's Deathcap",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_RabadonsDeathcap_Radiant.png"
+    },
+    {
+      "id": "DA_RedBuffRadiant",
+      "name": "光明版红霸符",
+      "englishName": "Radiant Red Buff",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_RedBuffRadiant.png"
+    },
+    {
+      "id": "DA_SpiritVisage_Radiant",
+      "name": "光明版振奋盔甲",
+      "englishName": "Radiant Spirit Visage",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_SpiritVisage_Radiant.png"
+    },
+    {
+      "id": "DA_KrakensFury_Radiant",
+      "name": "光明版海妖之怒",
+      "englishName": "Radiant Kraken's Fury",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_KrakensFury_Radiant.png"
+    },
+    {
+      "id": "DA_SpearOfShojinRadiant",
+      "name": "光明版朔极之矛",
+      "englishName": "Radiant Spear of Shojin",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_SpearOfShojinRadiant.png"
+    },
+    {
+      "id": "DA_VoidStaffRadiant",
+      "name": "光明版虚空之杖",
+      "englishName": "Radiant Void Staff",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_VoidStaffRadiant.png"
+    },
+    {
+      "id": "DA_SteadfastHeartRadiant",
+      "name": "光明版坚定之心",
+      "englishName": "Radiant Steadfast Heart",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_SteadfastHeartRadiant.png"
+    },
+    {
+      "id": "DA_StrikersFlailRadiant",
+      "name": "光明版强袭者的链枷",
+      "englishName": "Radiant Striker's Flail",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_StrikersFlailRadiant.png"
+    },
+    {
+      "id": "DA_SunfireCape_Radiant",
+      "name": "光明版日炎斗篷",
+      "englishName": "Radiant Sunfire Cape",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_SunfireCape_Radiant.png"
+    },
+    {
+      "id": "DA_ThiefsGlovesRadiant",
+      "name": "光明版窃贼手套",
+      "englishName": "Radiant Thief's Gloves",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_ThiefsGlovesRadiant.png"
+    },
+    {
+      "id": "DA_TitansResolve_Radiant",
+      "name": "光明版泰坦的坚决",
+      "englishName": "Radiant Titan's Resolve",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_TitansResolve_Radiant.png"
+    },
+    {
+      "id": "DA_WarmogsArmorRadiant",
+      "name": "光明版狂徒铠甲",
+      "englishName": "Radiant Warmog's Armor",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_WarmogsArmorRadiant.png"
+    },
+    {
+      "id": "DA_Artifact_RapidFireCannon",
+      "name": "疾射火炮",
+      "englishName": "Rapid Firecannon",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_RapidFireCannon.png"
+    },
+    {
+      "id": "DA_Component_RecurveBow",
+      "name": "反曲之弓",
+      "englishName": "Recurve Bow",
+      "category": "component",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Component_RecurveBow.png"
+    },
+    {
+      "id": "DA_RedBuff",
+      "name": "红霸符",
+      "englishName": "Red Buff",
+      "category": "core",
+      "recipe": [
+        "DA_Component_RecurveBow",
+        "DA_Component_RecurveBow"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_RedBuff.png"
+    },
+    {
+      "id": "DA_SpiritVisage",
+      "name": "振奋盔甲",
+      "englishName": "Spirit Visage",
+      "category": "core",
+      "recipe": [
+        "DA_Component_GiantsBelt",
+        "DA_Component_TearOfTheGoddess"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_SpiritVisage.png"
+    },
+    {
+      "id": "DA_KrakensFury",
+      "name": "海妖之怒",
+      "englishName": "Kraken's Fury",
+      "category": "core",
+      "recipe": [
+        "DA_Component_RecurveBow",
+        "DA_Component_NegatronCloak"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_KrakensFury.png"
+    },
+    {
+      "id": "DA_Artifact_SeekersArmguard",
+      "name": "探索者的护臂",
+      "englishName": "Seeker's Armguard",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_SeekersArmguard.png"
+    },
+    {
+      "id": "DA_Artifact_SilvermereDawn",
+      "name": "密银黎明",
+      "englishName": "Silvermere Dawn",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_SilvermereDawn.png"
+    },
+    {
+      "id": "DA_Component_SparringGloves",
+      "name": "拳套",
+      "englishName": "Sparring Gloves",
+      "category": "component",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Component_SparringGloves.png"
+    },
+    {
+      "id": "DA_Component_Spatula",
+      "name": "金铲铲",
+      "englishName": "Spatula",
+      "category": "component",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Component_Spatula.png"
+    },
+    {
+      "id": "DA_SpearOfShojin",
+      "name": "朔极之矛",
+      "englishName": "Spear of Shojin",
+      "category": "core",
+      "recipe": [
+        "DA_Component_TearOfTheGoddess",
+        "DA_Component_BFSword"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_SpearOfShojin.png"
+    },
+    {
+      "id": "DA_Artifact_StatikkShiv",
+      "name": "斯塔缇克电刃",
+      "englishName": "Statikk Shiv",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_StatikkShiv.png"
+    },
+    {
+      "id": "DA_SteadfastHeart",
+      "name": "坚定之心",
+      "englishName": "Steadfast Heart",
+      "category": "core",
+      "recipe": [
+        "DA_Component_ChainVest",
+        "DA_Component_SparringGloves"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_SteadfastHeart.png"
+    },
+    {
+      "id": "DA_SteraksGage",
+      "name": "斯特拉克的挑战护手",
+      "englishName": "Sterak's Gage",
+      "category": "core",
+      "recipe": [
+        "DA_Component_BFSword",
+        "DA_Component_GiantsBelt"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_SteraksGage.png"
+    },
+    {
+      "id": "DA_SteraksGageRadiant",
+      "name": "光明版斯特拉克的挑战护手",
+      "englishName": "Radiant Sterak's Gage",
+      "category": "radiant",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_SteraksGageRadiant.png"
+    },
+    {
+      "id": "DA_SunfireCape",
+      "name": "日炎斗篷",
+      "englishName": "Sunfire Cape",
+      "category": "core",
+      "recipe": [
+        "DA_Component_ChainVest",
+        "DA_Component_GiantsBelt"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_SunfireCape.png"
+    },
+    {
+      "id": "DA_TacticiansCape",
+      "name": "金锅铲冠冕",
+      "englishName": "Tactician's Cape",
+      "category": "core",
+      "recipe": [
+        "DA_Component_Spatula",
+        "DA_Component_FryingPan"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_TacticiansCape.png"
+    },
+    {
+      "id": "DA_TacticiansShield",
+      "name": "金锅锅冠冕",
+      "englishName": "Tacticians Shield",
+      "category": "core",
+      "recipe": [
+        "DA_Component_FryingPan",
+        "DA_Component_FryingPan"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_TacticiansShield.png"
+    },
+    {
+      "id": "DA_Item_Artifact_TalismanOfAscension",
+      "name": "飞升护符",
+      "englishName": "Talisman of Ascension",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Item_Artifact_TalismanOfAscension.png"
+    },
+    {
+      "id": "DA_Component_TearOfTheGoddess",
+      "name": "女神之泪",
+      "englishName": "Tear Of The Goddess",
+      "category": "component",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Component_TearOfTheGoddess.png"
+    },
+    {
+      "id": "DA_ThiefsGloves",
+      "name": "窃贼手套",
+      "englishName": "Thief's Gloves",
+      "category": "core",
+      "recipe": [
+        "DA_Component_SparringGloves",
+        "DA_Component_SparringGloves"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_ThiefsGloves.png"
+    },
+    {
+      "id": "DA_Artifact_TitanicHydra",
+      "name": "巨型九头蛇",
+      "englishName": "Titanic Hydra",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_TitanicHydra.png"
+    },
+    {
+      "id": "DA_TitansResolve",
+      "name": "泰坦的坚决",
+      "englishName": "Titan's Resolve",
+      "category": "core",
+      "recipe": [
+        "DA_Component_RecurveBow",
+        "DA_Component_ChainVest"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_TitansResolve.png"
+    },
+    {
+      "id": "DA_Artifact_VoidGauntlet",
+      "name": "虚空护手",
+      "englishName": "Void Gauntlet",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_VoidGauntlet.png"
+    },
+    {
+      "id": "DA_VoidStaff",
+      "name": "虚空之杖",
+      "englishName": "Void Staff",
+      "category": "core",
+      "recipe": [
+        "DA_Component_RecurveBow",
+        "DA_Component_TearOfTheGoddess"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_VoidStaff.png"
+    },
+    {
+      "id": "DA_WarmogsArmor",
+      "name": "狂徒铠甲",
+      "englishName": "Warmogs Armor",
+      "category": "core",
+      "recipe": [
+        "DA_Component_GiantsBelt",
+        "DA_Component_GiantsBelt"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_WarmogsArmor.png"
+    },
+    {
+      "id": "DA_Artifact_WitsEnd",
+      "name": "智慧末刃",
+      "englishName": "Wit's End",
+      "category": "artifact",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_Artifact_WitsEnd.png"
+    },
+    {
+      "id": "DA_18_EmblemFae",
+      "name": "花仙子纹章",
+      "englishName": "Fae Emblem",
+      "category": "emblem",
+      "recipe": [
+        "DA_Component_Spatula",
+        "DA_Component_BFSword"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemFae.png"
+    },
+    {
+      "id": "DA_18_EmblemHunter",
+      "name": "猎人纹章",
+      "englishName": "Hunter Emblem",
+      "category": "emblem",
+      "recipe": [
+        "DA_Component_FryingPan",
+        "DA_Component_BFSword"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemHunter.png"
+    },
+    {
+      "id": "DA_18_EmblemInferno",
+      "name": "地狱火纹章",
+      "englishName": "Inferno Emblem",
+      "category": "emblem",
+      "recipe": [
+        "DA_Component_Spatula",
+        "DA_Component_RecurveBow"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemInferno.png"
+    },
+    {
+      "id": "DA_18_EmblemRapidfire",
+      "name": "迅捷射手纹章",
+      "englishName": "Rapidfire Emblem",
+      "category": "emblem",
+      "recipe": [
+        "DA_Component_FryingPan",
+        "DA_Component_RecurveBow"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemRapidfire.png"
+    },
+    {
+      "id": "DA_18_EmblemElderwood",
+      "name": "永恒之森纹章",
+      "englishName": "Elderwood Emblem",
+      "category": "emblem",
+      "recipe": [
+        "DA_Component_Spatula",
+        "DA_Component_ChainVest"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemElderwood.png"
+    },
+    {
+      "id": "DA_18_EmblemSlayer",
+      "name": "狂战士纹章",
+      "englishName": "Ravager Emblem",
+      "category": "emblem",
+      "recipe": [
+        "DA_Component_FryingPan",
+        "DA_Component_NegatronCloak"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemSlayer.png"
+    },
+    {
+      "id": "DA_18_EmblemSprykin",
+      "name": "约德尔人和朋友纹章",
+      "englishName": "Sprykin Emblem",
+      "category": "emblem",
+      "recipe": [
+        "DA_Component_Spatula",
+        "DA_Component_NegatronCloak"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemSprykin.png"
+    },
+    {
+      "id": "DA_18_EmblemVanguard",
+      "name": "重装战士纹章",
+      "englishName": "Vanguard Emblem",
+      "category": "emblem",
+      "recipe": [
+        "DA_Component_FryingPan",
+        "DA_Component_ChainVest"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemVanguard.png"
+    },
+    {
+      "id": "DA_18_EmblemBlossom",
+      "name": "灵魂莲华纹章",
+      "englishName": "Blossom Emblem",
+      "category": "emblem",
+      "recipe": [
+        "DA_Component_Spatula",
+        "DA_Component_NeedlesslyLargeRod"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemBlossom.png"
+    },
+    {
+      "id": "DA_18_EmblemSpellweaver",
+      "name": "法师纹章",
+      "englishName": "Spellweaver Emblem",
+      "category": "emblem",
+      "recipe": [
+        "DA_Component_FryingPan",
+        "DA_Component_NeedlesslyLargeRod"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemSpellweaver.png"
+    },
+    {
+      "id": "DA_18_EmblemInvoker",
+      "name": "神谕纹章",
+      "englishName": "Invoker Emblem",
+      "category": "emblem",
+      "recipe": [
+        "DA_Component_FryingPan",
+        "DA_Component_TearOfTheGoddess"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemInvoker.png"
+    },
+    {
+      "id": "DA_18_EmblemLunar",
+      "name": "月蚀骑士纹章",
+      "englishName": "Lunar Emblem",
+      "category": "emblem",
+      "recipe": [
+        "DA_Component_Spatula",
+        "DA_Component_TearOfTheGoddess"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemLunar.png"
+    },
+    {
+      "id": "DA_18_EmblemBrawler",
+      "name": "斗士纹章",
+      "englishName": "Brawler Emblem",
+      "category": "emblem",
+      "recipe": [
+        "DA_Component_FryingPan",
+        "DA_Component_GiantsBelt"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemBrawler.png"
+    },
+    {
+      "id": "DA_18_EmblemBlackthorn",
+      "name": "黑荆棘纹章",
+      "englishName": "Blackthorn Emblem",
+      "category": "emblem",
+      "recipe": [
+        "DA_Component_Spatula",
+        "DA_Component_GiantsBelt"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemBlackthorn.png"
+    },
+    {
+      "id": "DA_18_EmblemExecutioner",
+      "name": "裁决使纹章",
+      "englishName": "Executioner Emblem",
+      "category": "emblem",
+      "recipe": [
+        "DA_Component_FryingPan",
+        "DA_Component_SparringGloves"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemExecutioner.png"
+    },
+    {
+      "id": "DA_18_EmblemPrimal",
+      "name": "野兽之灵纹章",
+      "englishName": "Primal Emblem",
+      "category": "emblem",
+      "recipe": [
+        "DA_Component_Spatula",
+        "DA_Component_SparringGloves"
+      ],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemPrimal.png"
+    },
+    {
+      "id": "DA_18_EmblemCoven",
+      "name": "魔女纹章",
+      "englishName": "Coven Emblem",
+      "category": "emblem",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemCoven.png"
+    },
+    {
+      "id": "DA_18_EmblemDefender",
+      "name": "护卫纹章",
+      "englishName": "Defender Emblem",
+      "category": "emblem",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemDefender.png"
+    },
+    {
+      "id": "DA_18_EmblemFloraFatalis",
+      "name": "绝命花妖纹章",
+      "englishName": "Flora Fatalis Emblem",
+      "category": "emblem",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemFloraFatalis.png"
+    },
+    {
+      "id": "DA_18_EmblemJuggernaut",
+      "name": "主宰纹章",
+      "englishName": "Juggernaut Emblem",
+      "category": "emblem",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemJuggernaut.png"
+    },
+    {
+      "id": "DA_18_EmblemFloraFatalisAugment",
+      "name": "绝命花妖纹章",
+      "englishName": "Flora Fatalis Emblem",
+      "category": "emblem",
+      "recipe": [],
+      "iconUrl": "https://c-tft-api.op.gg/img/set/18/tft-item/DA_18_EmblemFloraFatalisAugment.png"
+    }
+  ]
+}

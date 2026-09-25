@@ -1,4 +1,7 @@
-import type { AppState, Result } from '../shared/types.js';
+import { setupEquipment, renderEquipment, renderRecipes } from './equipment.js';
+import { compBuild } from './comp-build.js';
+import { entityIcon, itemIcon } from './icons.js';
+import type { AppState, Result, AiSettings, AiSettingsInput, Observation } from '../shared/types.js';
 const api = window.desktop;
 const el = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 let state: AppState;
@@ -7,6 +10,15 @@ let timer: ReturnType<typeof setTimeout> | null = null;
 let generation = 0;
 let searchGeneration = 0;
 let busy = false;
+let liveSubmitting = false;
+let liveStarting = false;
+let autoBusy = false;
+let autoEpoch = -1;
+let guideSignature = '';
+let guidePage = 0;
+const GUIDE_PAGE_SIZE = 10;
+let settings: AiSettings | null = null;
+let lastFields = '';
 const video = el<HTMLVideoElement>('capture-video');
 const preview = el<HTMLImageElement>('frame-preview');
 const canvas = document.createElement('canvas');
@@ -24,17 +36,45 @@ function stopStream() {
   if (timer) { clearTimeout(timer); timer = null; }
   if (stream) { for (const track of stream.getTracks()) { track.onended = null; track.onmute = null; track.stop(); } stream = null; }
   video.srcObject = null;
+  video.hidden = true;
+  preview.hidden = !preview.getAttribute('src');
 }
 function clearFrame() {
+  video.hidden = true;
   preview.removeAttribute('src'); preview.hidden = true;
   el('empty-preview').hidden = false; el('preview-label').hidden = true;
   canvas.width = canvas.height = 0;
 }
 function showFrame(data: string) {
-  preview.src = data; preview.hidden = false;
+  preview.src = data;
+  const playing = !!stream && state?.capture === 'active';
+  preview.hidden = playing; video.hidden = !playing;
   el('empty-preview').hidden = true; el('preview-label').hidden = false;
 }
 function time(iso: string) { return new Date(iso).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
+function liveActive() { return state.live.phase === 'watching' || state.live.phase === 'running'; }
+function renderLive() {
+  const live = state.live; const observation = live.observation;
+  el('live-result').hidden = live.phase === 'off';
+  el('live-stop').hidden = !liveActive();
+  const budget = state.budget;
+  el<HTMLButtonElement>('live-start').disabled = liveStarting || liveActive() || state.capture !== 'active' || state.ai.status === 'running' || !budget.ready;
+  el<HTMLButtonElement>('equipment-start').disabled=el<HTMLButtonElement>('live-start').disabled;
+  el('equipment-start').textContent=liveStarting?'正在开启…':liveActive()?'装备自动识别中':'开启装备自动识别';
+  const cost = `核算 ¥${(budget.chargedMicros / 1e6).toFixed(4)} / ¥10`;
+  el('live-status').textContent = `${live.message} · ${cost}`;
+  el('live-feedback').textContent = live.phase === 'off' ? '先开始读取窗口，再开启本次跟进。' : `${live.message} · 已尝试 ${live.requests}/720 次`;
+  el('test-budget').textContent = `${budget.message} · ${cost} · 已发送 ${budget.requests} 次${budget.averageMs === null ? '' : ` · 平均响应 ${(budget.averageMs / 1000).toFixed(2)} 秒`}${budget.reservedMicros ? ` · 预算预留 ¥${(budget.reservedMicros / 1e6).toFixed(4)}（非实际扣款）` : ''}`;
+  if (observation) {
+    const age = Math.max(0, Math.floor((Date.now() - Date.parse(observation.capturedAt)) / 1000));
+    const fields = observation.fields;
+    el('live-summary').textContent = `阶段 ${fields.stage ?? '?'} · 金币 ${fields.gold ?? '?'} · 生命 ${fields.hp ?? '?'} · 等级 ${fields.level ?? '?'} · ${age} 秒前${age >= 15 ? '（已过时）' : ''}`;
+  } else el('live-summary').textContent = liveActive() ? '等待识别游戏画面，未知字段不会自动补全。' : '自动发送已停止。';
+  const history = el('live-history');
+  history.replaceChildren(...live.events.map(event => {
+    const item = document.createElement('li'); item.textContent = `${time(event.capturedAt)} · ${event.summary}`; return item;
+  }));
+}
 function render(next: AppState) {
   if (state && next.epoch !== state.epoch) { stopStream(); clearFrame(); }
   if (next.capture === 'idle' || next.capture === 'paused') { if (stream) stopStream(); }
@@ -43,14 +83,17 @@ function render(next: AppState) {
   document.body.classList.toggle('mac', state.platform === 'darwin');
   el('source-name').textContent = state.inputName ?? '选择一个游戏窗口';
   el('source-name').title = state.inputName ?? '';
-  el('source-detail').textContent = state.capture === 'active' ? '读取中 · 每 3 秒更新一次' : state.capture === 'starting' ? '正在连接窗口…' : state.capture === 'paused' ? (state.source ? '已暂停 · 画面保留在本机' : '已导入截图 · 画面保留在本机') : state.source ? '窗口已选定，点击开始读取' : '开始前不会读取屏幕';
+  el('source-detail').textContent = state.capture === 'active' ? (liveActive() ? '实时视频跟进中 · 自动识别已开启' : '实时视频预览 · 仅在本机播放') : state.capture === 'starting' ? '正在连接窗口…' : state.capture === 'paused' ? (state.source ? '已暂停 · 画面保留在本机' : '已导入截图 · 画面保留在本机') : state.source ? '窗口已选定，点击开始读取' : '开始前不会读取屏幕';
+  if (!state.source && !state.inputName) el('source-detail').textContent = state.autoDetect.enabled ? state.autoDetect.message : '开始前不会读取屏幕';
+  el<HTMLInputElement>('auto-game').checked = state.autoDetect.enabled;
+  el('auto-game-status').textContent = state.autoDetect.message;
   el('state-dot').classList.toggle('active', state.capture === 'active');
   const capture = el<HTMLButtonElement>('capture-button');
   capture.disabled = !state.source || state.capture === 'starting' || busy;
   capture.textContent = state.capture === 'active' ? '暂停读取' : state.capture === 'starting' ? '连接中…' : state.capture === 'paused' && state.source ? '继续读取' : '开始读取';
   el('overlay-button').textContent = state.overlayVisible ? '隐藏浮窗' : '显示浮窗';
   el('overlay-button').setAttribute('aria-pressed', String(state.overlayVisible));
-  el('capture-detail').textContent = state.capturedAt ? `最近画面 ${time(state.capturedAt)} · ${state.capture === 'active' ? '读取中' : state.source ? '已暂停' : '导入截图'} · 仅本机` : '画面仅留在本机内存';
+  el('capture-detail').textContent = state.capturedAt ? `最近画面 ${time(state.capturedAt)} · ${state.capture === 'active' ? '读取中' : state.source ? '已暂停' : '导入截图'} · ${liveActive() ? '已允许持续发送' : state.ai.observation ? '已发送给所选模型' : '本机预览'}` : '画面仅留在本机内存';
   el('preview-label').textContent = state.capture === 'active' ? '读取中' : state.source ? '已暂停' : '导入截图';
   el('catalog-status').textContent = state.catalogVersion ? `Riot Data Dragon · 资源 ${state.catalogVersion} · ${state.catalogCount} 条` : '尚未同步 · Riot Data Dragon / en_US';
   if (state.catalogCheckedAt && !el('sync-feedback').textContent) el('sync-feedback').textContent = `缓存更新于 ${new Date(state.catalogCheckedAt).toLocaleString('zh-CN')}`;
@@ -64,6 +107,82 @@ function render(next: AppState) {
   const modifier = state.platform === 'darwin' ? '⌘' : 'Ctrl';
   el('shortcut-help').textContent = state.shortcuts.visibility && state.shortcuts.interaction ? `${modifier} Shift O 显示 / 隐藏；${modifier} Shift I 切换穿透。主窗口与菜单栏也可恢复操作。` : '部分快捷键被占用，点击穿透已禁用。可在主窗口或菜单栏恢复浮窗。';
   if (newlyFailed) notify(state.error);
+  el<HTMLButtonElement>('analyze-button').disabled = !state.capturedAt || state.ai.status === 'running';
+  el('ai-result').hidden = state.ai.status === 'idle';
+  el('ai-status').textContent = state.ai.message;
+  el('ai-cancel').hidden = state.ai.status !== 'running';
+  el('ai-review').hidden = !state.ai.observation;
+  for (const id of ['ai-save', 'ai-probe', 'ai-import', 'ai-remove']) el<HTMLButtonElement>(id).disabled = state.ai.status === 'running';
+  const observation = state.ai.observation;
+  el('ai-fields').hidden = !observation;
+  el('ai-summary').textContent = observation ? `阶段 ${observation.fields.stage ?? '未知'} · 金币 ${observation.fields.gold ?? '?'} · 生命 ${observation.fields.hp ?? '?'} · 等级 ${observation.fields.level ?? '?'} · ${(observation.elapsedMs / 1000).toFixed(2)} 秒 · ${observation.corrected ? '已确认' : '待确认'}` : '';
+  const signature = observation ? JSON.stringify(observation.fields) + observation.completedAt : '';
+  if (observation && signature !== lastFields) {
+    for (const name of ['stage', 'gold', 'hp', 'level'] as const) el<HTMLInputElement>(`field-${name}`).value = String(observation.fields[name] ?? '');
+    el<HTMLInputElement>('field-entities').value = observation.fields.entities.join(', ');
+    el('ai-entity-matches').textContent = observation.entities.map(item => `${item.name}：${item.id ?? '未匹配字典'}`).join('；');
+  }
+  lastFields = signature;
+  renderLive();
+  renderGuides();
+  renderEquipment(state);
+  // IPC replies and state broadcasts may arrive in either order. Start from the
+  // rendered state so finding a window cannot leave it selected but never previewed.
+  if (state.autoDetect.status === 'found') queueMicrotask(startDiscoveredCapture);
+}
+function renderGuides() {
+  const guides=state.guides;
+  el<HTMLInputElement>('guide-enabled').checked=guides.enabled;
+  el<HTMLSelectElement>('guide-order').value=guides.order;
+  el<HTMLButtonElement>('guide-refresh').disabled=guides.loading;
+  el('guide-scope').textContent=guides.scope+'。含同名棋盘变体，比例与样本均为同类阵容统计，不是本局胜率。';
+  el('guide-feedback').textContent=guides.message;
+  const updates=state.dataUpdates, official=updates.official;
+  el('guide-update-status').textContent=`官方 ${official?official.patch+(official.hotfix??''):'待核对'} · ${updates.officialCheckedAt?'检查 '+new Date(updates.officialCheckedAt).toLocaleString('zh-CN'):'尚未在线检查'}\n排名${updates.rankingCheckedAt?'检查 '+new Date(updates.rankingCheckedAt).toLocaleString('zh-CN'):'等待更新'} · 每天首次启动检查，同日有效缓存复用`;
+  el('guide-change-summary').textContent=updates.comparedAt?`变化对比：${new Date(updates.comparedAt).toLocaleString('zh-CN')} 的快照；新增 ${updates.added} 套、移出 ${updates.removed} 套。箭头按当前排序显示，胜率差为百分点。`:'当前补丁尚无历史排名对比。';
+  const query=el<HTMLInputElement>('guide-search').value.trim().toLowerCase();
+  const signature=JSON.stringify([guides,query,guidePage,state.equipment.reference.checkedAt,updates.changes]);
+  if(signature===guideSignature)return;guideSignature=signature;
+  const names=new Map(state.equipment.reference.items.map(i=>[i.id,i.name]));
+  const entries=[...guides.entries].sort((a,b)=>(guides.order==='win'?b.winRate-a.winRate:b.top4Rate-a.top4Rate)||a.averagePlace-b.averagePlace||b.games-a.games)
+    .filter(g=>!query||[g.name,...g.core,...g.flex,...g.units.flatMap(u=>u.items.flatMap(i=>[i.name,names.get(i.id)??'']))].join(' ').toLowerCase().includes(query));
+  guidePage=Math.min(guidePage,Math.max(0,Math.ceil(entries.length/GUIDE_PAGE_SIZE)-1));
+  el('guide-count').textContent=`全部 ${guides.entries.length} 套 · 匹配 ${entries.length} · 第 ${guidePage+1}/${Math.max(1,Math.ceil(entries.length/GUIDE_PAGE_SIZE))} 页`;
+  el<HTMLButtonElement>('guide-prev').disabled=guidePage===0;
+  el<HTMLButtonElement>('guide-next').disabled=(guidePage+1)*GUIDE_PAGE_SIZE>=entries.length;
+  const page=entries.slice(guidePage*GUIDE_PAGE_SIZE,(guidePage+1)*GUIDE_PAGE_SIZE);
+  el('guide-results').replaceChildren(...page.map(guide=>{
+    const article=document.createElement('article');article.className='guide-card';article.dataset.guideId=guide.id;
+    const title=document.createElement('h3');title.textContent=guide.name;
+    const stats=document.createElement('p');stats.className='guide-stats';stats.textContent=`前四 ${guide.top4Rate}% · 吃鸡 ${guide.winRate}% · 均名 ${guide.averagePlace} · ${guide.games.toLocaleString('zh-CN')} 局`;
+    const change=updates.changes.find(c=>c.id===guide.id);
+    if(change){const movement=guides.order==='win'?change.win:change.top4;const rate=guides.order==='win'?change.winRate:change.top4Rate;
+      const delta=document.createElement('span');delta.className='rank-change';delta.textContent=movement===null?' · 新增阵容':` · ${movement>0?'↑'+movement:movement<0?'↓'+Math.abs(movement):'名次持平'}${rate?' / '+(rate>0?'+':'')+rate+' 个百分点':''}`;stats.append(delta);}
+    const portraits=document.createElement('div');portraits.className='guide-portraits';for(const unit of guide.units)portraits.append(entityIcon(unit.name,unit.iconUrl,{kind:'champion',detail:unit.priority?'核心 '+unit.priority:'参考棋子'}));
+    const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent=`${guide.units.length} 位棋子 · 配装 / 站位 / 海克斯`;details.append(summary);
+    const plan=document.createElement('p');plan.textContent=guide.plan;details.append(plan);
+    for(const unit of guide.units){if(!unit.items.length)continue;const row=document.createElement('p');row.className='unit-items';row.append(entityIcon(unit.name,unit.iconUrl,{kind:'champion'}));for(const item of unit.items){const button=document.createElement('button');button.className='text-button item-link';button.title=`${names.get(item.id)??item.name} · 查看合成配方`;button.setAttribute('aria-label',button.title);button.append(itemIcon(item.id,state.equipment.reference,{focus:false}));button.addEventListener('click',()=>{selectTab('equipment');el<HTMLInputElement>('item-search').value=names.get(item.id)??item.name;el<HTMLSelectElement>('item-category').value='all';renderRecipes();});row.append(button);}details.append(row);}
+    const build=compBuild(guide,state.equipment.reference,state.dataUpdates.recipesPending);build.querySelector('.target-items')?.remove();details.append(build);
+    const stamp=document.createElement('p');stamp.className='fine';stamp.textContent=`OP.GG · ${guide.patch} · 更新约 ${new Date(guide.updatedAt).toLocaleString('zh-CN')}${guides.freshIds.includes(guide.id)?'':' · 过期或样本不足，不参与推荐'}`;
+    const actions=document.createElement('div');actions.className='guide-actions';
+    const pin=document.createElement('button');pin.textContent=guide.id===guides.selectedId?'已选阵容':guide.id===guides.recommendedId?'当前推荐 · 选择':'选择阵容';pin.disabled=!guides.freshIds.includes(guide.id);pin.addEventListener('click',()=>run(async()=>{unwrap(await api.guideSettings({enabled:true,order:state.guides.order,selectedId:guide.id}));unwrap(await api.overlay('show'));}));
+    const copy=document.createElement('button');copy.className='guide-copy';copy.textContent='复制阵容码';copy.dataset.copyGuideId=guide.id;copy.setAttribute('aria-live','polite');copy.addEventListener('click',()=>run(async()=>{copy.disabled=true;copy.textContent='复制中…';try{unwrap(await api.guideCopy(guide.id));copy.textContent='已复制';}catch(error){copy.textContent='复制阵容码';throw error;}finally{copy.disabled=false;setTimeout(()=>{if(copy.isConnected)copy.textContent='复制阵容码';},2000);}}));
+    const source=document.createElement('button');source.className='text-button';source.textContent='来源';source.addEventListener('click',()=>run(async()=>unwrap(await api.guideSource(guide.id))));
+    actions.append(pin,copy,source);article.append(title,portraits,stats,details,stamp,actions);return article;
+  }));
+  if(!page.length){const empty=document.createElement('p');empty.textContent='没有匹配的阵容，请换个关键词。';el('guide-results').append(empty);}
+}
+async function discoverGame() {
+  if (!state || autoBusy || busy || stream || !state.autoDetect.enabled || state.source || state.inputName || state.capture !== 'idle') return;
+  autoBusy = true;
+  try {
+    unwrap(await api.detectGame());
+  } finally { autoBusy = false; }
+}
+function startDiscoveredCapture() {
+  if (!state || busy || stream || !state.autoDetect.enabled || state.autoDetect.status !== 'found' || !state.source ||
+    state.capture !== 'idle' || state.epoch === autoEpoch) return;
+  autoEpoch = state.epoch; run(startCapture);
 }
 async function pause(reason?: string) {
   stopStream(); unwrap(await api.captureState('paused', state.epoch, reason));
@@ -79,10 +198,15 @@ async function sample(current: number, epoch: number) {
   if (!context) { await pause('无法创建画面预览。'); return; }
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
   const data = canvas.toDataURL('image/jpeg', .82);
-  unwrap(await api.frame(epoch));
+  const sampled = unwrap(await api.frame(epoch));
   if (current !== generation) return;
   showFrame(data);
-  timer = setTimeout(() => { run(() => sample(current, epoch)); }, 3000);
+  if ((sampled.live.phase === 'watching' || sampled.live.phase === 'running') && !liveSubmitting) {
+    liveSubmitting = true;
+    void api.liveFrame({ data, epoch, capturedAt: sampled.capturedAt!, frameCount: sampled.frameCount })
+      .then(unwrap).catch(notify).finally(() => { liveSubmitting = false; });
+  }
+  timer = setTimeout(() => { run(() => sample(current, epoch)); }, 1000);
 }
 async function startCapture() {
   if (state.capture === 'active') { await pause(); return; }
@@ -92,7 +216,7 @@ async function startCapture() {
   busy = true; el('notice').hidden = true;
   try {
     unwrap(await api.captureState('starting', epoch));
-    const next = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: { ideal: 1, max: 2 } }, audio: false });
+    const next = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: { ideal: 15, max: 30 } }, audio: false });
     if (current !== generation || epoch !== state.epoch) { next.getTracks().forEach(track => track.stop()); return; }
     stream = next; video.srcObject = next;
     const track = next.getVideoTracks()[0];
@@ -173,7 +297,7 @@ el('interaction-button').addEventListener('click', () => run(async () => unwrap(
 el('reset-overlay').addEventListener('click', () => run(async () => { unwrap(await api.overlay('reset')); unwrap(await api.overlay('show')); }));
 el<HTMLInputElement>('opacity').addEventListener('input', event => run(async () => unwrap(await api.opacity(Number((event.target as HTMLInputElement).value) / 100))));
 document.querySelectorAll<HTMLElement>('[data-close]').forEach(button => button.addEventListener('click', () => el<HTMLDialogElement>(button.dataset.close!).close()));
-const settingsTabs = ['data', 'overlay'];
+const settingsTabs = ['guide', 'equipment', 'data', 'overlay', 'ai'];
 function selectTab(name: string) {
   for (const id of settingsTabs) {
     const selected = id === name;
@@ -187,11 +311,103 @@ for (const name of settingsTabs) {
   el(`${name}-tab`).addEventListener('keydown', event => {
     if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
       event.preventDefault();
-      const next = event.key === 'Home' ? 'data' : event.key === 'End' ? 'overlay' : name === 'data' ? 'overlay' : 'data';
+      const next = event.key === 'Home' ? settingsTabs[0] : event.key === 'End' ? settingsTabs[settingsTabs.length - 1] : settingsTabs[(settingsTabs.indexOf(name) + (event.key === 'ArrowRight' ? 1 : settingsTabs.length - 1)) % settingsTabs.length];
       selectTab(next); el(`${next}-tab`).focus();
     }
   });
 }
+function renderProvider() {
+  const item = settings?.providers.find(item => item.provider === el<HTMLSelectElement>('ai-provider').value);
+  if (!item) return;
+  el<HTMLInputElement>('ai-model').value = item.model;
+  el<HTMLSelectElement>('ai-region').value = item.region;
+  el('ai-region-row').hidden = item.provider !== 'minimax';
+  el('ai-endpoint').textContent = `已保存服务地址：${item.endpoint}`;
+  el('ai-credentials').textContent = !settings?.secureStorage ? '系统安全存储不可用' : item.hasKey ? '密钥已保存在系统加密存储中' : '尚未配置密钥';
+}
+function renderSettings(value: AiSettings) {
+  settings = value;
+  el<HTMLSelectElement>('ai-provider').value = value.selected;
+  el<HTMLInputElement>('ai-enabled').checked = value.enabled;
+  renderProvider();
+  renderKeyStatus();
+}
+function renderKeyStatus(){
+  const item=settings?.providers.find(p=>p.provider===el<HTMLSelectElement>('ai-key-provider').value);
+  el('ai-key-status').textContent=!settings?.secureStorage?'系统安全存储不可用，暂不能保存':`${item?.label??''}：${item?.hasKey?'已加密保存，密钥有效性需连接测试确认':'尚未配置'}`;
+  el<HTMLButtonElement>('ai-key-save').disabled=!settings?.secureStorage;
+  el<HTMLButtonElement>('ai-remove').disabled=!item?.hasKey;
+}
+function clearKeyInput(){el<HTMLInputElement>('ai-key').value='';}
+function keyWork(work:()=>Promise<void>){
+  el('ai-key-feedback').textContent='';
+  void work().catch(error=>{el('ai-key-feedback').textContent=error instanceof Error?error.message:'密钥操作失败';});
+}
+function settingsInput(): AiSettingsInput {
+  return { provider: el<HTMLSelectElement>('ai-provider').value as AiSettingsInput['provider'], model: el<HTMLInputElement>('ai-model').value,
+    region: el<HTMLSelectElement>('ai-region').value as AiSettingsInput['region'], enabled: el<HTMLInputElement>('ai-enabled').checked };
+}
+function aiWork(work: () => Promise<void>) {
+  el('ai-feedback').textContent = '';
+  void work().catch(error => { el('ai-feedback').textContent = error instanceof Error ? error.message : '操作失败'; });
+}
+el('ai-provider').addEventListener('change', renderProvider);
+el('ai-save').addEventListener('click', () => aiWork(async () => { renderSettings(unwrap(await api.aiSave(settingsInput()))); el('ai-feedback').textContent = '设置已保存'; }));
+el('ai-key-provider').addEventListener('change',()=>{clearKeyInput();el('ai-key-feedback').textContent='';renderKeyStatus();});
+el('settings-dialog').addEventListener('close',clearKeyInput);
+el('ai-key-save').addEventListener('click',()=>keyWork(async()=>{
+  const input=el<HTMLInputElement>('ai-key'),key=input.value;clearKeyInput();
+  const button=el<HTMLButtonElement>('ai-key-save');button.disabled=true;
+  try{renderSettings(unwrap(await api.aiSetKey({provider:el<HTMLSelectElement>('ai-key-provider').value as AiSettingsInput['provider'],key})));el('ai-key-feedback').textContent='密钥已加密保存；未发送测试请求。';}
+  finally{renderKeyStatus();}
+}));
+el('ai-import').addEventListener('click', () => keyWork(async () => { clearKeyInput();renderSettings(unwrap(await api.aiImport()));el('ai-key-feedback').textContent='当前已配置：'+(settings?.providers.filter(p=>p.hasKey).map(p=>p.label).join('、')||'无')+'。导入只保存密钥，不会启用请求。'; }));
+el('ai-template').addEventListener('click',()=>keyWork(async()=>{el('ai-key-feedback').textContent=unwrap(await api.aiTemplate())?'空白模板已保存，填写所需平台的 Key 后点击“导入密钥文件”。':'已取消保存模板。';}));
+el('ai-remove').addEventListener('click', () => keyWork(async () => {clearKeyInput();renderSettings(unwrap(await api.aiRemove(el<HTMLSelectElement>('ai-key-provider').value as AiSettingsInput['provider'])));el('ai-key-feedback').textContent='所选平台密钥已移除。'; }));
+el('ai-probe').addEventListener('click', () => aiWork(async () => {
+  renderSettings(unwrap(await api.aiSave(settingsInput())));
+  const result = unwrap(await api.aiProbe());
+  el('ai-feedback').textContent = `${result.model} · 固定文本通过 · ${(result.elapsedMs / 1000).toFixed(2)} 秒`;
+}));
+el('analyze-button').addEventListener('click', () => run(async () => {
+  if (!settings?.enabled || !settings.providers.find(item => item.provider === settings?.selected)?.hasKey) {
+    el<HTMLDialogElement>('settings-dialog').showModal(); selectTab('ai'); el('ai-feedback').textContent = '请先配置模型并启用手动请求。'; return;
+  }
+  if (state.capture === 'active') await pause();
+  if (!state.capturedAt || !preview.src) throw new Error('请先导入截图或读取一帧。');
+  unwrap(await api.aiAnalyze({ data: preview.src, epoch: state.epoch, capturedAt: state.capturedAt, frameCount: state.frameCount }));
+}));
+el('ai-cancel').addEventListener('click', () => run(async () => { unwrap(await api.aiCancel()); }));
+async function startTracking(){
+  if(!settings?.enabled||!settings.providers.find(p=>p.provider===settings?.selected)?.hasKey){selectTab('ai');el('ai-feedback').textContent='请先配置 DeepSeek 并启用 AI 请求，再开启跟进。';return;}
+  liveStarting = true; renderLive();
+  try { const result=unwrap(await api.liveStart());if(['watching','running'].includes(result.live.phase)&&result.equipment.manual)unwrap(await api.equipmentInventory(null)); }
+  finally { liveStarting = false; renderLive(); }
+}
+el('live-start').addEventListener('click', () => run(startTracking));
+el('live-stop').addEventListener('click', () => run(async () => { unwrap(await api.liveStop()); }));
+el('live-details').addEventListener('click', () => { el<HTMLDialogElement>('settings-dialog').showModal(); selectTab('ai'); });
+el('ai-review').addEventListener('click', () => { el<HTMLDialogElement>('settings-dialog').showModal(); selectTab('ai'); });
+el('ai-confirm').addEventListener('click', () => aiWork(async () => {
+  const number = (id: string) => el<HTMLInputElement>(id).value.trim() ? Number(el<HTMLInputElement>(id).value) : null;
+  const fields: Observation = { stage: el<HTMLInputElement>('field-stage').value.trim() || null, gold: number('field-gold'), hp: number('field-hp'), level: number('field-level'),
+    entities: el<HTMLInputElement>('field-entities').value.split(/[,，]/).map(name => name.trim()).filter(Boolean) };
+  if (state.ai.observation?.fields.equipment) fields.equipment = state.ai.observation.fields.equipment;
+  unwrap(await api.aiCorrect(fields)); el('ai-feedback').textContent = '字段已确认';
+}));
+el('auto-game').addEventListener('change', () => run(async () => { unwrap(await api.autoDetect(el<HTMLInputElement>('auto-game').checked)); await discoverGame(); }));
+setupEquipment(startTracking);
+el('guide-search').addEventListener('input',()=>{guidePage=0;guideSignature='';renderGuides();});
+el('guide-prev').addEventListener('click',()=>{guidePage--;renderGuides();});
+el('guide-next').addEventListener('click',()=>{guidePage++;renderGuides();});
+el('guide-enabled').addEventListener('change', () => run(async () => unwrap(await api.guideSettings({ enabled: el<HTMLInputElement>('guide-enabled').checked, order: state.guides.order, selectedId: state.guides.selectedId }))));
+el('guide-order').addEventListener('change', () => run(async () => unwrap(await api.guideSettings({ enabled: true, order: el<HTMLSelectElement>('guide-order').value as 'win' | 'top4', selectedId: null }))));
+el('guide-auto').addEventListener('click', () => run(async () => unwrap(await api.guideSettings({ enabled: true, order: state.guides.order, selectedId: null }))));
+el('guide-refresh').addEventListener('click', () => run(async () => unwrap(await api.guideRefresh())));
+el('official-source').addEventListener('click', () => run(async () => unwrap(await api.officialSource())));
+el('guide-shortcut').addEventListener('click', () => { el<HTMLDialogElement>('settings-dialog').showModal(); selectTab('guide'); });
 window.addEventListener('beforeunload', stopStream);
 api.onState(render);
-run(async () => { render(unwrap(await api.state())); });
+setInterval(() => { if (state) renderLive(); }, 1000);
+setInterval(() => run(discoverGame), 5000);
+run(async () => { render(unwrap(await api.state())); renderSettings(unwrap(await api.aiSettings())); await discoverGame(); });
