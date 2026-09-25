@@ -30,7 +30,7 @@ for (const [provider, endpoint] of [['minimax', 'https://api.minimax.io/v1/chat/
 }
 test('Gemini uses header authentication and exposes final text only', async () => {
   const result = await generateText(config('gemini'), { system: 'Use sources.', prompt: 'A fixture' }, async (url, options) => {
-    assert.match(url, /\/gemini-3\.8-flash:generateContent$/); assert.equal(url.includes(key), false);
+    assert.match(url, /\/gemini-3\.5-flash-lite:generateContent$/); assert.equal(url.includes(key), false);
     assert.equal(options.headers['x-goog-api-key'], key);
     const body = JSON.parse(options.body);
     assert.equal(body.systemInstruction.parts[0].text, 'Use sources.');

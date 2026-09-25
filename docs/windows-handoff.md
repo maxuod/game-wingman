@@ -1,12 +1,18 @@
 # Windows 接续指南
 
-来源政策更新（2026-09-24）：数据来源不限于 OP.GG，统一在[来源登记表](data-sources.md)和第三方说明中署名，区分公开主线、本地接入、研究与候选。新增来源同时维护数据集溯源。此次为文档变更，没有接入新的运行时 API 或改变预算。
+本次同步当前完整 TFT 版本：指定/自动游戏窗口预览、置顶浮窗、三家 API 适配器、DeepSeek 单帧/持续识别、累计 ¥10 预算、OP.GG 阵容和装备参考、每日资料检查与游戏图标。源码包含空白 API 配置模板，不包含个人密钥、用户配置、账本或游戏截图。其他游戏的研究和求解器不属于本次交付。
 
-公开交接点：2026-09-24，版本 0.1.0，仓库 https://github.com/maxuod/game-wingman 。产品名称已统一为 **Game Wingman**，主窗口、浮窗和软件包统一显示同一名称。此时按要求暂停进一步功能开发，下一次以 Windows 作为 TFT 游戏实测环境；保留 macOS 桌面架构。
+## 配置 API
 
-## 在新电脑启动
+普通用户打开“资料与设置 → AI 识别 → API Key 配置”，选择平台后粘贴自己的 Key，点击“加密保存密钥”。也可导入本地 `.env` / JSON，或点击“保存空白模板”后填写。仓库提供 `api-keys.example.json` 与 `.env.example`；空字段跳过，导入按平台字段名归属，不猜测 Key 前缀。
 
-安装 Git 与 Node.js 22.12–22.x；仓库 `.nvmrc` 为 22.23.1。在 PowerShell 中：
+保存/导入不启用 AI、不切换模型、不发起测试。输入框清空后，重启仍可通过当前系统账户读取加密凭据。已保存的密钥不回传界面。连接测试需主动启用请求，标明计费；本轮固定 DeepSeek Flash，连接测试、单帧与持续跟进共用累计 ¥10 账本，不因重启或换游戏重置。
+
+详细操作见 [API 说明](api-providers.md)；装备识别需要额外开启并确认本次持续发送，见[自动装备建议](automatic-equipment.md)。
+
+## 从源码运行
+
+使用 Node.js 22.12–22.x（`.nvmrc` 为 22.23.1），在 PowerShell 执行：
 
 ```powershell
 git clone https://github.com/maxuod/game-wingman.git "game wingman"
@@ -17,55 +23,20 @@ npm test
 npm start
 ```
 
-无需复制这台 Mac 的 `node_modules`、`dist`、`release` 或用户数据。新机器应重新安装本机依赖。普通 PowerShell 即可，不需要管理员身份。若 PowerShell 拦截 npm.ps1，可用 `npm.cmd` 执行同样命令，无需放宽整个系统的执行策略。
+Windows 如拦截 `npm.ps1`，可使用 `npm.cmd`。启动外壳、预览和查询公开资料不需要 Key；AI 请求需要用户自己的有效凭据。
 
-桌面测试使用它自己创建的合成窗口：
+## 构建与验证
 
-```powershell
-npm run test:desktop
-npm run package:win
-```
+`npm run package:win` 输出 `release/Game Wingman-win32-x64/`，应保留整个目录；macOS 使用 `npm run package:mac`。本机 API 配置预览包使用 `release/api-config-preview/Game Wingman-win32-x64/`。退出旧实例后再启动新包；没有安装器、代码签名或自动更新软件本体。
 
-先退出正在运行的应用再测试。测试不会读取你的游戏或整个桌面。API 模拟测试包含在 `npm test` 中，不需要密钥。便携产物为 `release/Game Wingman-win32-x64/Game Wingman.exe`，需保留同目录依赖。当前没有已验证的正式 Windows 安装器。
+普通测试使用模拟网络、假密钥和合成画面，不访问付费 AI。用户正在游戏时用隐藏原生测试 `node scripts/smoke-guides.cjs`，它替换完整窗口清单并指定隔离的 `--user-data-dir`；不得读取真实游戏或真实用户 profile。完整 `npm run test:desktop` 需先退出其他实例；桌面测试本身仅捕获生成的夹具窗口。
 
-## 项目上下文
+本地检查、GitHub CI、打包、真实游戏验证和公开发布分别报告，见[桌面验证记录](desktop-validation.md)。目前真实 TFT 装备识别准确性、窗口化全屏持续覆盖与游戏兼容性仍需实测，不能以合成测试替代。
 
-- 目标是实时读取可见画面、识别实体、从攻略库检索、在小浮窗里给出有来源的解释。首款游戏 TFT，**美服 NA / en_US**。
-- 这是公开试用样品，用来收集 GitHub 反馈和为更多游戏产品提供蓝本；不是已经验证的上分工具。
-- UI 必须非常简洁：主窗口三个主要操作，浮窗单条信息，资料与设置放到次级面板。不要回到网页展示稿或大聊天面板。
-- 参考 ARAM-tool 的数据流程思路，UI 与代码独立实现；没有复制其代码或攻略库。
-- API 首批支持 MiniMax、DeepSeek、Gemini。文本调用层和检查 CLI 已实现；真实密钥、截图输入与桌面接线尚未完成。
-- 实时识别 / 动态建议仍在产品范围；保持现有封号风险说明和未获官方认可的标注。
+## 接续约束与入口
 
-## 先验证 Windows
-
-1. 主窗口和浮窗能启动；选择合成窗口、读取、暂停、重新选择都正确。
-2. `Ctrl Shift O` 显示 / 隐藏，`Ctrl Shift I` 切换穿透；快捷键被占用时有恢复入口。
-3. 焦点不被浮窗抢走；点击穿透、托盘恢复、窗口关闭后停止读取。
-4. 用户主动选择游戏窗口后，再记录 TFT 窗口模式 / 无边框模式的读取结果；独占全屏单独测，不推定所有模式都能覆盖。
-5. 记录 Windows 版本、分辨率、缩放、显示器数、游戏补丁、实际结果。截图可选且需脱敏，原始画面不要提交仓库。
-
-## 下一步开发顺序
-
-1. 解决 Windows 采集 / 浮窗问题，补齐实际测试记录。
-2. 用自己的密钥依次手动验证三家文本 API；参考 [API 提供方说明](api-providers.md)。不要在对话或 Issue 中粘贴密钥。
-3. 在“资料与设置”加入提供方 / 模型 / 凭据状态，完成 Windows Credential Manager 等系统安全存储方案，再接入主进程调用。
-4. 明确用户选择的截图发送范围，完成一次手动截图识别；保留实体 ID、人工校正和 unknown，不把模型常识当作画面事实。
-5. 建立少量自有、审核过的攻略样例与检索，绑定来源和适用补丁；之后再连接低频动态更新与浮窗解释。
-
-## 文件入口
-
-| 路径 | 用途 |
-| --- | --- |
-| `src/main/index.ts` | 系统窗口、采集授权、IPC、快捷键、托盘 |
-| `src/main/catalog.ts` | Riot Data Dragon 名称字典 |
-| `src/main/ai/providers.ts` | 三家文本 API 适配器 |
-| `src/preload/index.ts` | 窄 IPC 边界 |
-| `src/renderer/` | 主窗口与浮窗 UI |
-| `src/shared/types.ts` | 桌面状态和接口 |
-| `tests/` | 离线测试 |
-| `scripts/smoke.cjs` | 原生合成窗口测试 |
-| `.env.example` | 无密钥配置模板 |
-| `docs/desktop-validation.md` | 当前证据和未测试边界 |
-
-开发代理接续提示：先阅读 README.zh-CN.md、本文件与 docs/api-providers.md；保留现有简洁 UI 和可见信息输入边界；Windows 实测后再做 AI 接线，不要把 API 适配测试描述成真实模型或实际游戏已验证。
+- 数据源不限于 OP.GG，但新增来源必须同步维护[来源登记表](data-sources.md)、数据集溯源与第三方说明。已接入和候选必须分开标注。
+- 数据版本保持独立：游戏补丁、热修、静态资源版本、地区与统计窗口不能混为一谈。参考[每日更新规则](daily-data-updates.md)。
+- 主窗口保留三个主要操作；AI/装备/资料配置放在次级面板。只读可见画面，不接入游戏内存、注入或自动操作。
+- 保留系统加密存储、仅主窗口凭据写入、单帧/会话发送确认、旧结果清理和持续预算保护。不要把个人 `.env`、填写后的模板、用户缓存或原始截图提交仓库。
+- `src/main/index.ts` 负责窗口/IPC/同意流程；`src/main/ai/` 负责提供方、加密存储、导入格式、预算及抽样；`src/renderer/` 负责主界面、浮窗和图标。`tests/` 为离线检查，`scripts/smoke-guides.cjs` 为隐藏桌面回归入口。

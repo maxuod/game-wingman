@@ -1,0 +1,226 @@
+{
+  "date": "2026-09-24T19:49:36.444Z",
+  "task": "Synthetic visible-field extraction; completion latency, not time to first token. Three different fixtures per provider and modality. Missing HP must remain unknown.",
+  "samples": [
+    {
+      "provider": "deepseek",
+      "model": "deepseek-flash",
+      "endpoint": "https://api.deepseek.com/chat/completions",
+      "modality": "text",
+      "round": 1,
+      "elapsedMs": 948,
+      "valid": true,
+      "inputTokens": 124,
+      "outputTokens": 26
+    },
+    {
+      "provider": "deepseek",
+      "model": "deepseek-flash",
+      "endpoint": "https://api.deepseek.com/chat/completions",
+      "modality": "text",
+      "round": 2,
+      "elapsedMs": 678,
+      "valid": true,
+      "inputTokens": 124,
+      "outputTokens": 26
+    },
+    {
+      "provider": "deepseek",
+      "model": "deepseek-flash",
+      "endpoint": "https://api.deepseek.com/chat/completions",
+      "modality": "text",
+      "round": 3,
+      "elapsedMs": 673,
+      "valid": true,
+      "inputTokens": 124,
+      "outputTokens": 26
+    },
+    {
+      "provider": "deepseek",
+      "model": "deepseek-flash",
+      "endpoint": "https://api.deepseek.com/chat/completions",
+      "modality": "image",
+      "round": 1,
+      "elapsedMs": 968,
+      "valid": true,
+      "inputTokens": 307,
+      "outputTokens": 26
+    },
+    {
+      "provider": "deepseek",
+      "model": "deepseek-flash",
+      "endpoint": "https://api.deepseek.com/chat/completions",
+      "modality": "image",
+      "round": 2,
+      "elapsedMs": 1310,
+      "valid": true,
+      "inputTokens": 307,
+      "outputTokens": 33
+    },
+    {
+      "provider": "deepseek",
+      "model": "deepseek-flash",
+      "endpoint": "https://api.deepseek.com/chat/completions",
+      "modality": "image",
+      "round": 3,
+      "elapsedMs": 1074,
+      "valid": true,
+      "inputTokens": 307,
+      "outputTokens": 33
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/",
+      "modality": "text",
+      "round": 1,
+      "elapsedMs": 2435,
+      "valid": false,
+      "error": "http",
+      "httpStatus": 503
+    },
+    {
+      "provider": "minimax",
+      "model": "MiniMax-M3",
+      "endpoint": "https://api.minimax.cn/v1/chat/completions",
+      "modality": "text",
+      "round": 1,
+      "elapsedMs": 2314,
+      "valid": true,
+      "inputTokens": 273,
+      "outputTokens": 33
+    },
+    {
+      "provider": "minimax",
+      "model": "MiniMax-M3",
+      "endpoint": "https://api.minimax.cn/v1/chat/completions",
+      "modality": "text",
+      "round": 2,
+      "elapsedMs": 1384,
+      "valid": true,
+      "inputTokens": 273,
+      "outputTokens": 33
+    },
+    {
+      "provider": "minimax",
+      "model": "MiniMax-M3",
+      "endpoint": "https://api.minimax.cn/v1/chat/completions",
+      "modality": "text",
+      "round": 3,
+      "elapsedMs": 1289,
+      "valid": true,
+      "inputTokens": 273,
+      "outputTokens": 33
+    },
+    {
+      "provider": "minimax",
+      "model": "MiniMax-M3",
+      "endpoint": "https://api.minimax.cn/v1/chat/completions",
+      "modality": "image",
+      "round": 1,
+      "elapsedMs": 1921,
+      "valid": true,
+      "inputTokens": 648,
+      "outputTokens": 33
+    },
+    {
+      "provider": "minimax",
+      "model": "MiniMax-M3",
+      "endpoint": "https://api.minimax.cn/v1/chat/completions",
+      "modality": "image",
+      "round": 2,
+      "elapsedMs": 1697,
+      "valid": true,
+      "inputTokens": 648,
+      "outputTokens": 33
+    },
+    {
+      "provider": "minimax",
+      "model": "MiniMax-M3",
+      "endpoint": "https://api.minimax.cn/v1/chat/completions",
+      "modality": "image",
+      "round": 3,
+      "elapsedMs": 1740,
+      "valid": true,
+      "inputTokens": 648,
+      "outputTokens": 33
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/",
+      "modality": "text",
+      "round": 1,
+      "elapsedMs": 3677,
+      "valid": false,
+      "error": "http",
+      "httpStatus": 503
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/",
+      "modality": "text",
+      "round": 1,
+      "elapsedMs": 761,
+      "valid": true,
+      "inputTokens": 118,
+      "outputTokens": 56
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/",
+      "modality": "text",
+      "round": 2,
+      "elapsedMs": 652,
+      "valid": true,
+      "inputTokens": 118,
+      "outputTokens": 56
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/",
+      "modality": "text",
+      "round": 3,
+      "elapsedMs": 637,
+      "valid": true,
+      "inputTokens": 118,
+      "outputTokens": 56
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/",
+      "modality": "image",
+      "round": 1,
+      "elapsedMs": 1212,
+      "valid": true,
+      "inputTokens": 1179,
+      "outputTokens": 56
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/",
+      "modality": "image",
+      "round": 2,
+      "elapsedMs": 1526,
+      "valid": true,
+      "inputTokens": 1179,
+      "outputTokens": 56
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/",
+      "modality": "image",
+      "round": 3,
+      "elapsedMs": 1572,
+      "valid": true,
+      "inputTokens": 1179,
+      "outputTokens": 56
+    }
+  ]
+}

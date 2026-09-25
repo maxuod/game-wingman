@@ -1,0 +1,23 @@
+[
+  {
+    "provider": "minimax",
+    "model": "MiniMax-M3",
+    "elapsedMs": 3372,
+    "fieldsValid": true,
+    "packaged": true
+  },
+  {
+    "provider": "deepseek",
+    "model": "deepseek-flash",
+    "elapsedMs": 1259,
+    "fieldsValid": true,
+    "packaged": true
+  },
+  {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "elapsedMs": 1657,
+    "fieldsValid": true,
+    "packaged": true
+  }
+]

@@ -1,12 +1,12 @@
-/** Text-only provider boundary. Not wired to screen capture or renderer IPC. */
+/** Main-process provider boundary. Never called automatically by capture. */
 export const PROVIDERS = {
   minimax: { label: 'MiniMax', model: 'MiniMax-M3', url: 'https://api.minimax.io/v1/chat/completions', keyEnv: 'MINIMAX_API_KEY', modelEnv: 'MINIMAX_MODEL' },
   deepseek: { label: 'DeepSeek', model: 'deepseek-flash', url: 'https://api.deepseek.com/chat/completions', keyEnv: 'DEEPSEEK_API_KEY', modelEnv: 'DEEPSEEK_MODEL' },
-  gemini: { label: 'Gemini', model: 'gemini-3.8-flash', url: 'https://generativelanguage.googleapis.com/v1beta/models/', keyEnv: 'GEMINI_API_KEY', modelEnv: 'GEMINI_MODEL' }
+  gemini: { label: 'Gemini', model: 'gemini-3.5-flash-lite', url: 'https://generativelanguage.googleapis.com/v1beta/models/', keyEnv: 'GEMINI_API_KEY', modelEnv: 'GEMINI_MODEL' }
 } as const;
 export type ProviderId = keyof typeof PROVIDERS;
-export interface ProviderConfig { provider: ProviderId; model: string; apiKey: string; enabled: boolean; timeoutMs: number }
-export interface TextRequest { system?: string; prompt: string; maxOutputTokens?: number; signal?: AbortSignal }
+export interface ProviderConfig { provider: ProviderId; model: string; apiKey: string; enabled: boolean; timeoutMs: number; region?: 'cn' | 'global' }
+export interface TextRequest { system?: string; prompt: string; maxOutputTokens?: number; signal?: AbortSignal; image?: { mimeType: 'image/png' | 'image/jpeg'; data: string } }
 export interface TextResult { provider: ProviderId; model: string; text: string; inputTokens?: number; outputTokens?: number }
 export class ProviderError extends Error {
   constructor(public code: 'disabled' | 'configuration' | 'input' | 'network' | 'timeout' | 'cancelled' | 'http' | 'response', message: string, public status?: number) {
@@ -23,7 +23,16 @@ export function providerConfig(env: NodeJS.ProcessEnv, requested = env.AI_PROVID
   if (/[\r\n]/.test(apiKey)) throw new ProviderError('configuration', 'Invalid API key format.');
   const timeoutMs = Number(env.AI_TIMEOUT_MS ?? 30_000);
   if (!Number.isInteger(timeoutMs) || timeoutMs < 1000 || timeoutMs > 120_000) throw new ProviderError('configuration', 'AI_TIMEOUT_MS must be between 1000 and 120000.');
-  return { provider, model, apiKey, enabled: env.AI_ENABLED === 'true', timeoutMs };
+  const region = env.MINIMAX_REGION ?? 'global';
+  if (region !== 'cn' && region !== 'global') throw new ProviderError('configuration', 'MINIMAX_REGION must be cn or global.');
+  return { provider, model, apiKey, enabled: env.AI_ENABLED === 'true', timeoutMs, region };
+}
+
+export function providerEndpoint(config: Pick<ProviderConfig, 'provider' | 'region'>): string {
+  if (!Object.hasOwn(PROVIDERS, config.provider) || (config.region !== undefined && !['cn', 'global'].includes(config.region))) {
+    throw new ProviderError('configuration', 'Invalid provider or region.');
+  }
+  return config.provider === 'minimax' && config.region === 'cn' ? 'https://api.minimax.cn/v1/chat/completions' : PROVIDERS[config.provider].url;
 }
 
 type RecordValue = Record<string, unknown>;
@@ -40,20 +49,28 @@ export async function generateText(config: ProviderConfig, input: TextRequest, f
   const limit = input.maxOutputTokens ?? 1024;
   if (!Number.isInteger(limit) || limit < 32 || limit > 8192) throw new ProviderError('input', 'Output token limit must be between 32 and 8192.');
   if (input.signal?.aborted) throw new ProviderError('cancelled', 'Request cancelled.');
+  if (input.image && (!['image/png', 'image/jpeg'].includes(input.image.mimeType) || typeof input.image.data !== 'string' ||
+      input.image.data.length > 8_000_000 || !/^[A-Za-z0-9+/]+={0,2}$/.test(input.image.data))) {
+    throw new ProviderError('input', 'Invalid or oversized inline image.');
+  }
   const definition = PROVIDERS[config.provider];
-  let url: string = definition.url;
+  let url: string = providerEndpoint(config);
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   let body: RecordValue;
   if (config.provider === 'gemini') {
     url += `${encodeURIComponent(config.model)}:generateContent`;
     headers['x-goog-api-key'] = config.apiKey;
-    body = { contents: [{ role: 'user', parts: [{ text: input.prompt }] }], generationConfig: { maxOutputTokens: limit },
+    body = { contents: [{ role: 'user', parts: [{ text: input.prompt }, ...(input.image ? [{ inlineData: input.image }] : [])] }],
+      generationConfig: { maxOutputTokens: limit, ...(config.model.startsWith('gemini-3') ? { thinkingConfig: { thinkingLevel: 'low' } } : {}) },
       ...(input.system ? { systemInstruction: { parts: [{ text: input.system }] } } : {}) };
   } else {
     headers.Authorization = `Bearer ${config.apiKey}`;
     body = { model: config.model, stream: false, messages: [
-      ...(input.system ? [{ role: 'system', content: input.system }] : []), { role: 'user', content: input.prompt }
-    ], ...(config.provider === 'minimax' ? { max_completion_tokens: limit, reasoning_split: true } : { max_tokens: limit }) };
+      ...(input.system ? [{ role: 'system', content: input.system }] : []), { role: 'user', content: input.image ? [
+        { type: 'text', text: input.prompt }, { type: 'image_url', image_url: { url: `data:${input.image.mimeType};base64,${input.image.data}` } }
+      ] : input.prompt }
+    ], ...(config.provider === 'minimax' ? { max_completion_tokens: limit, reasoning_split: true } : { max_tokens: limit }),
+      ...(config.provider === 'deepseek' || config.model === 'MiniMax-M3' ? { thinking: { type: 'disabled' } } : {}) };
   }
   const timeout = AbortSignal.timeout(config.timeoutMs);
   const signal = input.signal ? AbortSignal.any([input.signal, timeout]) : timeout;

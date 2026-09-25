@@ -1,0 +1,34 @@
+// Hidden integration: synthetic credentials and files only. No provider requests.
+const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=require('node:path');
+module.exports=async({app,main,overlay,profile,until,artifacts})=>{
+ const settings=()=>main.evaluate(async()=>(await window.desktop.aiSettings()).value);
+ await main.evaluate(()=>{document.getElementById('settings-dialog').showModal();document.getElementById('ai-tab').click()});
+ assert.equal(await main.locator('#ai-key').getAttribute('type'),'password');assert.equal((await settings()).enabled,false);
+ await main.evaluate(()=>{document.getElementById('ai-key').value='synthetic-pasted-deepseek';document.getElementById('ai-key-save').click()});
+ await until(settings,s=>s.providers.find(p=>p.provider==='deepseek').hasKey);assert.equal(await main.locator('#ai-key').inputValue(),'');
+ assert.equal((await settings()).enabled,false);assert.equal((await settings()).selected,'deepseek');
+ assert.equal(JSON.stringify(await settings()).includes('synthetic-pasted-deepseek'),false);
+ assert.equal((await fs.readFile(path.join(profile,'ai-settings.json'),'utf8')).includes('synthetic-pasted-deepseek'),false);
+ assert.equal((await overlay.evaluate(()=>window.desktop.aiSetKey({provider:'deepseek',key:'synthetic-denied'}))).ok,false);
+ assert.equal((await overlay.evaluate(()=>window.desktop.aiTemplate())).ok,false);
+ assert.equal((await main.evaluate(()=>window.desktop.aiSetKey({provider:'unknown',key:'synthetic-rejected'}))).ok,false);
+ const template=path.join(profile,'api-keys.json');
+ await app.evaluate(({dialog},file)=>{dialog.showSaveDialog=async()=>({canceled:false,filePath:file})},template);
+ await main.evaluate(()=>document.getElementById('ai-template').click());
+ await until(async()=>fs.readFile(template,'utf8').catch(()=>''),t=>t.includes('DEEPSEEK_API_KEY'));
+ const blank=JSON.parse(await fs.readFile(template,'utf8'));assert.ok(Object.values(blank).every(v=>v===''));
+ blank.GEMINI_API_KEY='synthetic-imported-gemini';blank.MINIMAX_API_KEY='synthetic-imported-minimax';blank.AI_ENABLED=true;
+ const uppercase=path.join(profile,'API-KEYS.JSON');await fs.writeFile(uppercase,JSON.stringify(blank));
+ await app.evaluate(({dialog},file)=>{dialog.showOpenDialog=async()=>({canceled:false,filePaths:[file]})},uppercase);
+ await main.evaluate(()=>document.getElementById('ai-import').click());await until(settings,s=>s.providers.every(p=>p.hasKey));
+ assert.equal((await settings()).enabled,false,'Import never enables AI');assert.equal((await settings()).selected,'deepseek','Import never switches the active provider');
+ await main.evaluate(()=>{const p=document.getElementById('ai-key-provider');p.value='gemini';p.dispatchEvent(new Event('change'));document.getElementById('ai-remove').click()});
+ await until(settings,s=>!s.providers.find(p=>p.provider==='gemini').hasKey);assert.equal((await settings()).providers.find(p=>p.provider==='deepseek').hasKey,true);
+ await main.evaluate(()=>{document.getElementById('ai-key').value='synthetic-never-saved';const p=document.getElementById('ai-key-provider');p.value='deepseek';p.dispatchEvent(new Event('change'));});
+ assert.equal(await main.locator('#ai-key').inputValue(),'');
+ await main.evaluate(()=>document.getElementById('key-title').scrollIntoView());await main.screenshot({path:path.join(artifacts,'api-key-settings.png')});
+ await main.evaluate(()=>{document.getElementById('ai-key').value='synthetic-clear-on-close';document.getElementById('settings-dialog').close()});
+ await until(()=>main.locator('#ai-key').inputValue(),v=>v==='');
+ const state=await main.evaluate(async()=>(await window.desktop.state()).value);assert.equal(state.budget.requests,0);
+ return {paste:true,encrypted:true,template:true,multiProviderImport:true,remove:true,secretReturned:false,aiRequests:0};
+};

@@ -1,1 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024"><rect x="32" y="32" width="960" height="960" rx="218" fill="#21333E"/><path d="M672 268H338a48 48 0 0 0-48 48v392a48 48 0 0 0 48 48h334" fill="none" stroke="#A8D0C6" stroke-width="52" stroke-linecap="round"/><path d="M450 420h286M450 512h196M450 604h126" stroke="#F2F5F4" stroke-width="38" stroke-linecap="round"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 256 256">
+  <title>Game Wingman — W in flight</title>
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="#21333e"/>
+  <g id="wingman" fill="#a8d0c6">
+    <path d="M36 76 96 106Q101 108 103 113L117 145 128 129 139 145 153 113Q155 108 160 106L220 76 210 100Q206 109 197 113L168 127Q164 129 162 134L144 172 128 151 112 172 94 134Q92 129 88 127L59 113Q50 109 46 100Z"/>
+    <path d="M54 115 82 128Q85 129 87 134L99 160 68 141Q63 138 60 132ZM202 115 174 128Q171 129 169 134L157 160 188 141Q193 138 196 132Z"/>
+  </g>
+</svg>

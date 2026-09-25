@@ -2,20 +2,20 @@
 
 登记日期：2026-09-24。Game Wingman 的数据来源**不限于 OP.GG**：官方资料用于核对规则和补丁，社区结构化资料用于补充实体关系，统计平台用于阵容与配装参考。选源依据是版本匹配、字段质量、统计口径和可用条件。
 
-本页区分公开主线与本地开发预览：`995999e` 是本次核对的公开代码基线；`icon-preview` 是尚未发布到主线的本地 Windows 开发包。**发布来源说明不表示下列本地功能或候选接口已经发布。**
+本页对应当前 TFT 代码版本。下表明确标注已接入、仅研究及候选；其他游戏的本地研究记录不随本次 TFT 更新发布。
 
-This registry distinguishes the public code baseline, local development integrations, research inputs and candidates. A listed source is not necessarily an active integration. Source attribution does not imply endorsement or grant a reuse license.
+This registry distinguishes integrated TFT sources, research inputs and candidates. A listed source is not necessarily an active integration. Source attribution does not imply endorsement or grant a reuse license.
 
 ## 已使用的 TFT 来源
 
 | 来源及署名 | 使用内容与处理 | 接入状态 / 范围 | 版本与更新依据 |
 | --- | --- | --- | --- |
-| [Riot Games — TFT Data Dragon](https://developer.riotgames.com/docs/tft#data-dragon) | 英雄、羁绊的 ID 和英文名称；按赛季过滤作为识别字典 | 公开代码基线已接入；手动同步 NA realm / en_US；不是阵容统计库 | 从 [NA realm](https://ddragon.leagueoflegends.com/realms/na.json) 读取资源版本；本次核查 16.19.1。缓存记录 `version`、`checkedAt` |
-| [Riot Games — TFT 官方更新](https://teamfighttactics.leagueoflegends.com/en-us/news/game-updates/) | 补丁号、热修标记、发布日期、内容指纹与装备核查提示；不收录整篇公告 | 本地开发版已接入每日资料检查；用于核对补丁，不是软件本体更新 | 本次依据为 [18.3 / 9 月 24 日 B 热修](https://teamfighttactics.leagueoflegends.com/en-us/news/game-updates/teamfight-tactics-patch-18-3/)；发布与获取时间分开记录 |
-| [OP.GG — TFT 阵容统计](https://op.gg/tft/meta-trends/comps) | 阵容、棋子、目标配装、来源坐标、阵容码和统计事实；阵容说明使用本地模板，不复制攻略正文 | 本地开发版已接入 50 套主页面变体，39 套含完整坐标；全服 / 全段位 / 近 24 小时，非独立 NA 样本 | TFT 18.3；每条含 `sourceUrl`、`patch`、`updatedAt`、`checkedAt` 和样本量；每日启动检查，排名超过 6 小时或官方变化时刷新 |
-| [OP.GG — TFT 装备](https://op.gg/tft/game-guide/items) | 137 件装备、55 种配方；整理名称和成分关系，供本地按目标阵容补缺计算 | 本地开发版已接入；装备配方独立于阵容排行更新 | Set 18 / 18.3；快照记录来源及核查时间。官方变更后需核查，不自动把旧配方标为新版本 |
-| [OP.GG — 阵容海克斯候选](https://op.gg/tft/meta-trends/comps) | 按阵容读取候选 ID、名称、等级、可出现阶段与图标链接；不保存说明正文 | 本地开发版按展开加载，缓存 6 小时；不代表玩家当前三个选项的排名 | 每份缓存含阵容 ID、补丁和读取时间；没有来源数据时不编造候选 |
-| [OP.GG 公共图片 CDN](https://c-tft-api.op.gg/img/set/18/tft-item/DA_LastWhisper.png)；游戏资产权利归 Riot Games 等各自权利人 | 来源元数据中的英雄、装备和海克斯图片，用于配装、站位及合成图示 | 本地开发版按需加载，缓存复用 7 天；仓库不打包图片全集 | 图片 URL 保留赛季路径；不因图片路径含赛季号就认定统计或配方版本相同 |
+| [Riot Games — TFT Data Dragon](https://developer.riotgames.com/docs/tft#data-dragon) | 英雄、羁绊的 ID 和英文名称；按赛季过滤作为识别字典 | 已接入；手动同步 NA realm / en_US；不是阵容统计库 | 从 [NA realm](https://ddragon.leagueoflegends.com/realms/na.json) 读取资源版本；本次核查 16.19.1。缓存记录 `version`、`checkedAt` |
+| [Riot Games — TFT 官方更新](https://teamfighttactics.leagueoflegends.com/en-us/news/game-updates/) | 补丁号、热修标记、发布日期、内容指纹与装备核查提示；不收录整篇公告 | 本次 TFT 版本已接入每日资料检查；用于核对补丁，不是软件本体更新 | 本次依据为 [18.3 / 9 月 24 日 B 热修](https://teamfighttactics.leagueoflegends.com/en-us/news/game-updates/teamfight-tactics-patch-18-3/)；发布与获取时间分开记录 |
+| [OP.GG — TFT 阵容统计](https://op.gg/tft/meta-trends/comps) | 阵容、棋子、目标配装、来源坐标、阵容码和统计事实；阵容说明使用本地模板，不复制攻略正文 | 本次 TFT 版本已接入 50 套主页面变体，39 套含完整坐标；全服 / 全段位 / 近 24 小时，非独立 NA 样本 | TFT 18.3；每条含 `sourceUrl`、`patch`、`updatedAt` 和样本量；获取时间记录在快照的 `rankingCheckedAt`；每日启动检查，排名超过 6 小时或官方变化时刷新 |
+| [OP.GG — TFT 装备](https://op.gg/tft/game-guide/items) | 137 件装备、55 种配方；整理名称和成分关系，供本地按目标阵容补缺计算 | 本次 TFT 版本已接入；装备配方独立于阵容排行更新 | Set 18 / 18.3；快照记录来源及核查时间。官方变更后需核查，不自动把旧配方标为新版本 |
+| [OP.GG — 阵容海克斯候选](https://op.gg/tft/meta-trends/comps) | 按阵容读取候选 ID、名称、等级、可出现阶段与图标链接；不保存说明正文 | 本次 TFT 版本按展开加载，缓存 6 小时；不代表玩家当前三个选项的排名 | 每份缓存含阵容 ID、补丁和读取时间；没有来源数据时不编造候选 |
+| [OP.GG 公共图片 CDN](https://c-tft-api.op.gg/img/set/18/tft-item/DA_LastWhisper.png)；游戏资产权利归 Riot Games 等各自权利人 | 来源元数据中的英雄、装备和海克斯图片，用于配装、站位及合成图示 | 本次 TFT 版本按需加载，缓存复用 7 天；仓库不打包图片全集 | 图片 URL 保留赛季路径；不因图片路径含赛季号就认定统计或配方版本相同 |
 
 本地计算规则由 Game Wingman 实现：按目标核心和来源配装顺序补缺，扣除已有成装，避免重复分配同一散件。这个排序不是 OP.GG 对当前对局的实时判断，AI 识别结果也不是外部攻略来源。
 
@@ -56,4 +56,4 @@ Data Dragon 的资源版本不等于 TFT 补丁号；`en_US` 不等于 NA 对局
 
 ## GitHub 维护位置
 
-README 中英文入口链接到本页；第三方权利说明放在 `THIRD_PARTY_NOTICES.md`；具体数据集携带自身来源、修订及许可记录。新增来源的代码或数据变更应同时更新这三处适用的记录，不能只在聊天或本地临时文件里署名。界面中的来源入口应指向实际使用的平台；当前运行时仍显示它实际使用的 OP.GG / Riot 来源，本次文档变更没有切换数据提供方。
+README 中英文入口链接到本页；第三方权利说明放在 `THIRD_PARTY_NOTICES.md`；具体数据集携带自身来源、修订及许可记录。新增来源的代码或数据变更应同时更新这三处适用的记录，不能只在聊天或本地临时文件里署名。界面中的来源入口应指向实际使用的平台；当前运行时仍显示它实际使用的 OP.GG / Riot 来源，本次 API 配置更新没有切换数据提供方。
